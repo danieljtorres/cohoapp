@@ -1,0 +1,47 @@
+export default {
+  namespaced: true,
+  state: {
+    authUser: false,
+    tokenData: false
+  },
+  mutations: {
+    SET_TOKEN_DATA(state, playload) {
+      state.tokenData = playload
+    },
+    SET_AUTH_USER(state, playload) {
+      state.authUser = playload
+    }
+  },
+  actions: {
+    async loginAdmin({ commit }, data) {
+      try {
+        const { tokenData, authUser } = await this.$sv.authService.loginAdmin(data)
+        commit('SET_TOKEN_DATA', tokenData)
+        commit('SET_AUTH_USER', authUser)
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+    async loginEmployee({ commit }, data) {
+      try {
+        const { tokenData, authUser } = await this.$sv.authService.loginEmployee(data)
+        commit('SET_TOKEN_DATA', tokenData)
+        commit('SET_AUTH_USER', authUser)
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+    async logoutAdmin() {
+      this.$sv.authService.logout()
+    },
+    async logoutEmployee() {
+      try {
+        return await this.$sv.authService.logoutEmployee()
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    }
+  }
+}
