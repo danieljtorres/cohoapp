@@ -1,6 +1,9 @@
 'use strict'
 
+<<<<<<< HEAD
 /** @type {import('@adonisjs/framework/src/Env')} */
+=======
+>>>>>>> 5a29e584bba66c4f2031c0be4d80c402159d0e8a
 const Env = use('Env')
 
 module.exports = {
@@ -65,7 +68,11 @@ module.exports = {
   */
   cookie: {
     httpOnly: true,
+<<<<<<< HEAD
     sameSite: false,
+=======
+    sameSite: true,
+>>>>>>> 5a29e584bba66c4f2031c0be4d80c402159d0e8a
     path: '/'
   },
 
@@ -91,6 +98,7 @@ module.exports = {
   | the redis file. But you are free to define an object here too.
   |
   */
+<<<<<<< HEAD
   redis: {
     host: '127.0.0.1',
     port: 6379,
@@ -98,4 +106,7 @@ module.exports = {
     db: 0,
     keyPrefix: ''
   }
+=======
+  redis: 'self::redis.local'
+>>>>>>> 5a29e584bba66c4f2031c0be4d80c402159d0e8a
 }
