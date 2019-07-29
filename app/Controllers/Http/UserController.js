@@ -1,6 +1,5 @@
 'use strict'
 
-<<<<<<< HEAD
 const User = use('App/Models/User')
 const WorkingDay = use('App/Models/WorkingDay')
 const Mail = use('Mail')
@@ -163,9 +162,3 @@ class UserController {
 }
 
 module.exports = UserController
-=======
-class UserController {
-}
-
-module.exports = UserController
->>>>>>> 9e9820a4afa52bf82d400659f11d8b8940507dd4
