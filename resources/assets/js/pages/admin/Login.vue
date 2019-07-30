@@ -12,7 +12,7 @@
                 </v-toolbar>
                 <v-card-text>
                   <v-text-field v-model="username" v-validate="'required'" :error-messages="errors.collect('username')" label="Nombre de usuario" data-vv-name="username" required></v-text-field>
-                  <v-text-field v-model="password" v-validate="'required'" :error-messages="errors.collect('password')" label="Contraseña" data-vv-name="password" required></v-text-field>
+                  <v-text-field type="password" v-model="password" v-validate="'required'" :error-messages="errors.collect('password')" label="Contraseña" data-vv-name="password" required></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>

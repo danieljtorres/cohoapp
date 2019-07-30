@@ -28,7 +28,7 @@
                     <br>
                     <v-flex xs12 text-xs-center>
                       <v-text-field v-model="username" v-validate="'required'" :error-messages="errors.collect('step-2.username')" label="Nombre de usuario" data-vv-name="username" required></v-text-field>
-                      <v-text-field v-model="password" v-validate="'required'" :error-messages="errors.collect('step-2.password')" label="Contraseña" data-vv-name="password" required></v-text-field>
+                      <v-text-field type="password" v-model="password" v-validate="'required'" :error-messages="errors.collect('step-2.password')" label="Contraseña" data-vv-name="password" required></v-text-field>
                       <div class="mb-3"></div>
                       <v-btn color="primary" type="submit">acceder</v-btn>
                       <v-btn color="warning" @click="step = --step">atras</v-btn>

@@ -42,7 +42,7 @@
             Cancelar
           </v-btn>
 
-          <v-btn color="green darken-1" flat="flat" v-if="!authUser.role && !activeActivity" @click="logout">
+          <v-btn color="green darken-1" flat="flat" v-if="!authUser.role || !activeActivity" @click="logout">
             Ok
           </v-btn>
         </v-card-actions>

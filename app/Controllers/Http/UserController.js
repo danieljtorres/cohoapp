@@ -71,10 +71,12 @@ class UserController {
   }
 
   async update({ request, response }) {
-    const { user_id } = request.all()
-    
+    const data = request.all()
+
+    if (!data.password) delete data.password
+
     try {
-      const user = await User.find(user_id)
+      const user = await User.find(data.user_id)
       user.merge(request.except(['role', 'user_id']))
       await user.save()
       response.json({
