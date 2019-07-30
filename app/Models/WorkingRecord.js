@@ -9,7 +9,7 @@ class WorkingRecord extends Model {
     super.boot()
 
     this.addHook('beforeCreate', async (instance) => {
-      nowDate = moment()
+      const nowDate = moment()
       if (!instance.dirty.schedule) instance.schedule = (nowDate.hour() >= 6 && nowDate.hour()) <= 22 ? 'day' : 'night'
       if (!instance.dirty.start) instance.start = nowDate.unix()
     })

@@ -1,44 +1,44 @@
 <template>
   <v-content>
     <v-container fluid>
-      <v-dialog v-model="isNewUser" max-width="500px">
+      <v-dialog :value="isAction" max-width="500px">
         <v-card>
           <v-card-title>
-            <span class="headline">Nuevo empleado</span>
+            <span class="headline">{{ isAction == 'edit' ? 'Editar' : 'Nuevo' }} empleado</span>
           </v-card-title>
 
           <v-card-text>
             <v-container grid-list-md>
-              <!--<v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+              <v-layout wrap>
+                <v-flex xs12 sm6 md6>
+                  <v-text-field type="email" v-model="user.username" label="Nombre de usuario"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                <v-flex xs12 sm6 md6>
+                  <v-text-field v-model="user.email" label="Correo"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                <v-flex xs12 sm6 md6>
+                  <v-text-field v-model="user.firstname" label="Nombre"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                <v-flex xs12 sm6 md6>
+                  <v-text-field v-model="user.lastname" label="Apellido"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field v-model="user.password" label="Contraseña"></v-text-field>
                 </v-flex>
-              </v-layout>-->
+              </v-layout>
             </v-container>
           </v-card-text>
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="isNewUser = false">Cancelar</v-btn>
-            <v-btn color="blue darken-1" flat @click="saveUser">Guardar</v-btn>
+            <v-btn color="blue darken-1" flat @click="isAction = false">Cancelar</v-btn>
+            <v-btn color="blue darken-1" flat @click="doAction">Guardar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-card>
         <v-card-title>
-          <v-btn color="primary" dark class="mb-2" @click="isNewUser = true">Nuevo empleado</v-btn>
+          <v-btn color="primary" dark class="mb-2" @click="isAction = 'save'">Nuevo empleado</v-btn>
           <v-spacer></v-spacer>
           <v-text-field
             v-model="search"
@@ -99,16 +99,15 @@ export default {
     await this.$store.dispatch('users/getEmployees')
   },
   data: () => ({
-    isNewUser: false,
-    userForSave: {
+    isAction: false,
+    user: {
+      user_id: null,
       username: '',
       email: '',
       firstname: '',
       lastname: '',
-      password: '',
-      repassword: ''
+      password: ''
     },
-    userForEdit: null,
     userForDelete: null,
     search: '',
     headersForEmployees: [
@@ -125,13 +124,33 @@ export default {
   },
   methods: {
     setUserForEdit(item) {
-      this.userForEdit = item
+      this.user.user_id = item.id
+      this.user.username = item.username
+      this.user.email = item.email
+      this.user.firstname = item.firstname
+      this.user.lastname = item.lastname
+      this.isAction = 'edit'
     },
     setUserForDelete(item) {
-      this.userForDelete = item
+      this.userForDelete = item.id
     },
-    saveUser() {
+    doAction() {
+      const vue = this
+      let userData, promise
+      if (this.isAction == 'save') {
+        userData = Object.assign({}, this.user)
+        delete userData.user_id
+        promise = this.$store.dispatch('users/saveEmployee', userData)
+      } else if (this.isAction == 'edit') {
+        promise = this.$store.dispatch('users/edit', this.user)
+      }
 
+      promise.then((result) => {
+        console.log(result)
+        vue.isAction = false
+      }).catch((err) => {
+        console.log(err)
+      });
     }
   }
 }

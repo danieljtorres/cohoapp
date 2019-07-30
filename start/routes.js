@@ -30,10 +30,14 @@ Route.group(() => {
   Route.get('working-record/active', 'WorkingRecordController.active').middleware('auth')
   Route.post('working-record/end', 'WorkingRecordController.end').middleware('auth')
 
-  Route.get('users/employees', 'UserController.getEmployees').middleware('auth')
   Route.get('users/admins', 'UserController.getAdmins').middleware('auth')
+  Route.get('users/employees', 'UserController.getEmployees').middleware('auth')
+  Route.post('users/employees', 'UserController.saveEmployee').middleware('auth')
+  Route.put('users', 'UserController.update').middleware('auth')
+  Route.delete('users', 'UserController.delete').middleware('auth')
 
-  Route.get('users/employees/report', 'UserController.exportToExcel').middleware('auth')
+  Route.get('users/employees/report', 'UserController.getEmployeesReport').middleware('auth')
+  Route.get('users/employees/report', 'UserController.getEmployeesReport').middleware('auth')
 }).prefix("api/v1")
 
 Route.any('*', ({view}) =>  view.render('app'))

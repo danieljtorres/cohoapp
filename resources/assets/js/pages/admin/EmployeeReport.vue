@@ -15,14 +15,46 @@
           </v-toolbar>
           <v-card-text>
             <v-container grid-list-md>
-              <!--<v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+              <v-layout wrap>
+                <v-flex xs12 sm6 md6>
+                  <date-range-picker
+                    ref="startPicker"
+                    :locale-data="{ firstDay: 1, format: 'DD-MM-YYYY' }"
+                    :singleDatePicker="true"
+                    :timePicker="true"
+                    :timePicker24Hour="true"
+                    :showWeekNumbers="false"
+                    :showDropdowns="false"
+                    :ranges="false"
+                    v-model="newRecord.start"
+                  >
+                      <div slot="input" slot-scope="picker" style="min-width: 350px;">
+                        {{ picker.startDate }}
+                      </div>
+                  </date-range-picker>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                <v-flex xs12 sm6 md6>
+                  <date-range-picker
+                    ref="endPicker"
+                    :locale-data="{ firstDay: 1, format: 'DD-MM-YYYY' }"
+                    :singleDatePicker="true"
+                    :timePicker="true"
+                    :timePicker24Hour="true"
+                    :showWeekNumbers="false"
+                    :showDropdowns="false"
+                    :ranges="false"
+                    :minDate="newRecord.start.endDate"
+                    v-model="newRecord.end"
+                  >
+                      <div slot="input" slot-scope="picker" style="min-width: 350px;">
+                        {{ picker.startDate }}
+                      </div>
+                  </date-range-picker>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+                <v-flex xs12 sm6 md6>
+                  <v-select :items="categories" @input="setCategory" :value="newRecord.category_id" item-text="name" item-value="id" label="Categoria laboral" name="category" data-vv-name="category"></v-select>
+                </v-flex>
+                <!--<v-flex xs12 sm6 md4>
                   <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -30,16 +62,11 @@
                 </v-flex>
                 <v-flex xs12 sm6 md4>
                   <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                </v-flex>
-              </v-layout>-->
+                </v-flex>-->
+              </v-layout>
             </v-container>
           </v-card-text>
 
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="isNewRecord = false">Cancelar</v-btn>
-            <v-btn color="blue darken-1" flat @click="saveRecord">Guardar</v-btn>
-          </v-card-actions>
         </v-card>
       </v-dialog>
       <v-card>
@@ -96,7 +123,7 @@
                         <v-list-tile-title>
                           <v-icon
                             small
-                            @click="setUserForEdit(props.item)"
+                            @click="setRecordForEdit(props.item)"
                           >
                             edit
                           </v-icon>
@@ -106,7 +133,7 @@
                         <v-list-tile-title>
                           <v-icon
                             small
-                            @click="setUserForDelete(props.item)"
+                            @click="setRecordForDelete(props.item)"
                           >
                             delete
                           </v-icon>
@@ -130,13 +157,31 @@
 </template>
 
 <script>
+import DateRangePicker from 'vue2-daterange-picker'
+import moment from 'moment'
+
+const momentnow = moment()
+
 export default {
   async created() {
+    await this.$store.dispatch('categories/getAll')
+    if (this.categories.length) {
+      this.newRecord.category_id = this.categories[0].id
+    }
     this.setFilters()
     await this.$store.dispatch('users/getEmployeeReport', this.params)
+    this.newRecord.user_id = this.params.id
   },
   data: () => ({
     isNewRecord: false,
+    newRecord: {
+      start: { startDate: momentnow.format(), endDate: momentnow.format() },
+      end: { startDate: momentnow.format(), endDate: momentnow.format() },
+      category_id: null,
+      user_id: null,
+      recordsData: []
+    },
+    recordForEdit: {},
     startFilter: null,
     endFilter: null,
     customFilters: false,
@@ -150,6 +195,7 @@ export default {
   }),
   computed: {
     report() { return this.$store.state.users.report },
+    categories() { return this.$store.state.categories.list },
     params() { return { start_filter: this.startFilter, end_filter: this.endFilter, user_id: this.$route.params.id } }
   },
   methods: {
@@ -177,8 +223,28 @@ export default {
       
       this.$store.dispatch('users/getEmployeeReport', this.params)
     },
+    setCategory(val) {
+      this.newRecord.category_id = val
+    },
+    setRecordForEdit(item) {
+      this.recordForEdit = item
+    },
+    setRecordForDelete(item) {
+      this.recordForDelete = item.id
+    },
     saveRecord() {
-
+      this.$store.dispatch('records/save', newRecord).then((result) => {
+        this.isNewRecord = false
+      }).catch((err) => {
+        
+      });
+    },
+    editRecord() {
+      this.$store.dispatch('records/edit', recordForEdit).then((result) => {
+        this.isEditRecord = false
+      }).catch((err) => {
+        
+      });
     },
     saveToExcel() {
 
@@ -194,6 +260,9 @@ export default {
     formatDate: function(value, moment, format) {
       return moment.unix(value).format(format)
     }
+  },
+  components: {
+    DateRangePicker
   }
 }
 </script>

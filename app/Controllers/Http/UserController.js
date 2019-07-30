@@ -75,8 +75,8 @@ class UserController {
     
     try {
       const user = await User.find(user_id)
-      await user.merge(request.except(['role', 'user_id']))
-
+      user.merge(request.except(['role', 'user_id']))
+      await user.save()
       response.json({
         data: user
       })

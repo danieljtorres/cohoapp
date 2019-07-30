@@ -7,6 +7,7 @@ class WorkingRecordsSchema extends Schema {
   up () {
     this.create('working_records', (table) => {
       table.increments()
+      table.bigInteger('start').notNullable()
       table.bigInteger('end')
       table.enu('schedule', ['day', 'night']).default('day')
       table.string('answer', 255)
@@ -15,6 +16,7 @@ class WorkingRecordsSchema extends Schema {
       table.timestamps()
     })
   }
+
   down () {
     this.drop('working_records')
   }

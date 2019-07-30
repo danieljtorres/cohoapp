@@ -17,9 +17,9 @@ class AuthController {
           token: token,
           user: user
         })
+      } else {
+        response.status(401).json({})
       }
-
-      response.status(401).json({})
     } catch (error) {
       response.status(error.status).json({
         error: error.message

@@ -25,8 +25,8 @@ export default {
       { title: 'Inicio', icon: 'dashboard', link: '/admin' },
       { title: 'Administradores', icon: 'people', link: '/admin/administradores' },
       { title: 'Empleados', icon: 'people_outline', link: '/admin/empleados' },
-      { title: 'Categorias Laborales', icon: 'work', link: '/admin/categorias-laborales' },
-      { title: 'Actividades', icon: 'work_outline', link: '/admin/actividades' }
+      //{ title: 'Categorias Laborales', icon: 'work', link: '/admin/categorias-laborales' },
+      //{ title: 'Actividades', icon: 'work_outline', link: '/admin/actividades' }
     ]
   }),
   computed: {

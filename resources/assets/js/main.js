@@ -8,7 +8,7 @@ import es from 'vee-validate/dist/locale/es';
 import VeeValidate, { Validator } from 'vee-validate';
 import moment from 'moment'
 import 'moment/locale/es'
-
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { axiosInstance } from '@/_plugins/axios.plugin'
 import { Router } from '@/routes'
 import { store } from '@/store'
