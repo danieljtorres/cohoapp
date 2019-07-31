@@ -51,9 +51,10 @@
                 v-validate="'required'"
                 data-vv-name="quest"
               ></textarea>
-              <span v-if="errors.has('quest')">{{ errors.collect('quest')[0] }}</span>
+              <span v-if="errors.has('quest')"><small>{{ errors.collect('quest')[0] }}</small></span>
             </form>
             <small v-if="activeActivity.quest">* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo</small>
+            <small v-if="!activeActivity.quest">Quieres terminar la tarea?</small>
           </v-card-text>
 
           <v-card-actions>
@@ -95,8 +96,8 @@ export default {
         this.isStartActivity = true;
         this.activityForStart = data
       } else {
-        this.isEndActivity = true
         if (this.activeActivity.id != data.id) {
+          this.isEndActivity = true
           this.activityForStart = data
         }
       }

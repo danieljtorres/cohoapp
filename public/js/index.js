@@ -5886,6 +5886,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function created() {
@@ -5913,9 +5914,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         this.isStartActivity = true;
         this.activityForStart = data;
       } else {
-        this.isEndActivity = true;
-
         if (this.activeActivity.id != data.id) {
+          this.isEndActivity = true;
           this.activityForStart = data;
         }
       }
@@ -62682,9 +62682,11 @@ var render = function() {
                               _vm._v(" "),
                               _vm.errors.has("quest")
                                 ? _c("span", [
-                                    _vm._v(
-                                      _vm._s(_vm.errors.collect("quest")[0])
-                                    )
+                                    _c("small", [
+                                      _vm._v(
+                                        _vm._s(_vm.errors.collect("quest")[0])
+                                      )
+                                    ])
                                   ])
                                 : _vm._e()
                             ])
@@ -62696,6 +62698,10 @@ var render = function() {
                                 "* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo"
                               )
                             ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        !_vm.activeActivity.quest
+                          ? _c("small", [_vm._v("Quieres terminar la tarea?")])
                           : _vm._e()
                       ]),
                       _vm._v(" "),
