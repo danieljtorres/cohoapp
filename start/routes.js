@@ -23,6 +23,8 @@ Route.group(() => {
   Route.post('logout', 'AuthController.logout')
 
   Route.get('categories', 'CategoryController.index')
+  Route.post('categories', 'CategoryController.save')
+  Route.put('categories', 'CategoryController.update')
   
   Route.get('working-activities', 'WorkingActivityController.index')
 

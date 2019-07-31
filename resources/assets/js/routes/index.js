@@ -32,7 +32,7 @@ export const Router = new VueRouter({
     beforeEnter: guards.isAdmin,
     children: [{
       path: '/',
-      component: pages.admin.Index
+      redirect: '/admin/empleados'
     }, {
       path: 'administradores',
       component: pages.admin.Admins

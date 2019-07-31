@@ -144,6 +144,28 @@
                 </td>
               </tr>
             </template>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-xs-center">Total dia</td>
+                <td class="text-xs-center">Total noche</td>
+                <td class="text-xs-center">TOTAL</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="text-xs-center">{{ getTotals('day') }}</td>
+                <td class="text-xs-center">{{ getTotals('night') }}</td>
+                <td class="text-xs-center">{{ getTotals() }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
           </tbody>
           <tbody v-if="!report.length">
             <tr>
@@ -254,6 +276,16 @@ export default {
       const endMoment = this.$moment.unix(end)
 
       return Math.round(endMoment.diff(startMoment, 'hours', true) * 100) / 100
+    },
+    getTotals(type = null) {
+      let total = 0
+      for (const day of this.report) {
+        for (const record of day.records) {
+          if (type == record.schedule) total += this.getHours(record.start, record.end)
+          if (type == null) total += this.getHours(record.start, record.end)
+        }
+      }
+      return total
     }
   },
   filters: {
