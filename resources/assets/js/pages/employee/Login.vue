@@ -6,7 +6,7 @@
           <v-layout align-center justify-center fill-height>
             <v-flex xs10 md4>
               <div class="py-5"></div>
-              <fieldset data-vv-scope="step-1" v-if="step === 1">
+              <fieldset data-vv-scope="step-2" v-if="step === 2">
                 <v-layout align-center justify-center row wrap fill-height>
                   <v-flex xs12 text-xs-center>
                     <v-select :items="categories" @input="setCategory" :value="category_id" item-text="name" item-value="id" label="Categoria laboral" name="category" data-vv-name="category"></v-select>
@@ -18,10 +18,12 @@
                     </button>
                     <br>
                     <span>Empezar</span>
+                    <br>
+                    <v-btn color="warning" @click="step = --step">atras</v-btn>
                   </v-flex>
                 </v-layout>
               </fieldset>
-              <fieldset data-vv-scope="step-2" v-if="step === 2">
+              <fieldset data-vv-scope="step-1" v-if="step === 1">
                 <v-layout align-center justify-center row wrap fill-height>
                   <v-flex xs12 text-xs-center>
                     <span>Accede con tus datos para iniciar tu jornada laboral</span>
@@ -31,7 +33,7 @@
                       <v-text-field type="password" v-model="password" v-validate="'required'" :error-messages="errors.collect('step-2.password')" label="Contraseña" data-vv-name="password" required></v-text-field>
                       <div class="mb-3"></div>
                       <v-btn color="primary" type="submit">acceder</v-btn>
-                      <v-btn color="warning" @click="step = --step">atras</v-btn>
+                      <!--<v-btn color="warning" @click="step = --step">atras</v-btn>-->
                     </v-flex>
                   </v-flex>
                 </v-layout>
@@ -41,7 +43,7 @@
         </form>
       </v-container>
     </v-content>
-    <v-toolbar app clipped-left fixed height="58" class="indigo white--text elevation-1">
+    <v-toolbar app clipped-left fixed height="58" class="header-app white--text elevation-1">
       <v-toolbar-title>Iniciar jornada</v-toolbar-title>
     </v-toolbar>
     <v-footer class="pa-3">

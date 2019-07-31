@@ -4596,9 +4596,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['title'],
   data: function data() {
@@ -4609,9 +4606,6 @@ __webpack_require__.r(__webpack_exports__);
   computed: {
     authUser: function authUser() {
       return this.$store.state.auth.authUser;
-    },
-    activeActivity: function activeActivity() {
-      return this.$store.state.activities.active;
     }
   },
   methods: {
@@ -4627,7 +4621,11 @@ __webpack_require__.r(__webpack_exports__);
         });
       } else {
         this.$store.dispatch('auth/logoutEmployee').then(function (result) {
-          if (result) _this.$router.push('/login');
+          if (result) {
+            _this.$router.push('/login');
+
+            _this.$store.commit('activities/SET_ACTIVE', null);
+          }
         });
       }
     }
@@ -5888,7 +5886,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function created() {
@@ -5997,6 +5994,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
 //
 //
 //
@@ -12369,7 +12368,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.avatar-toggle {\n  cursor: pointer;\n} \n", ""]);
+exports.push([module.i, "\n.avatar-toggle {\n  cursor: pointer;\n}\n.header-app {\n  background-color: #04091e !important;\n}\n", ""]);
 
 // exports
 
@@ -60608,7 +60607,7 @@ var render = function() {
   return _c(
     "v-toolbar",
     {
-      staticClass: "indigo white--text elevation-1",
+      staticClass: "header-app white--text elevation-1",
       attrs: { app: "", "clipped-left": "", fixed: "", height: "58" }
     },
     [
@@ -60754,18 +60753,10 @@ var render = function() {
                   ])
                 : _vm._e(),
               _vm._v(" "),
-              !_vm.authUser.role && !_vm.activeActivity
+              !_vm.authUser.role
                 ? _c("v-card-text", [
                     _vm._v(
                       "\n        ¿Estás seguro que deseas finalizar tu jornada laboral del dia de hoy?\n      "
-                    )
-                  ])
-                : _vm._e(),
-              _vm._v(" "),
-              !_vm.authUser.role && _vm.activeActivity
-                ? _c("v-card-text", [
-                    _vm._v(
-                      "\n        Completa las tareas activas para poder finalizar tu jornada\n      "
                     )
                   ])
                 : _vm._e(),
@@ -62593,9 +62584,7 @@ var render = function() {
                     [
                       _c("v-card-text", [
                         _vm._v(
-                          "\n          Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum " +
-                            _vm._s(_vm.activityForStart.name) +
-                            "\n        "
+                          "\n          ¿Estás seguro de querer comenzar la jornada?\n        "
                         )
                       ]),
                       _vm._v(" "),
@@ -62693,7 +62682,9 @@ var render = function() {
                               _vm._v(" "),
                               _vm.errors.has("quest")
                                 ? _c("span", [
-                                    _vm._v(_vm._s(_vm.errors.collect("quest")))
+                                    _vm._v(
+                                      _vm._s(_vm.errors.collect("quest")[0])
+                                    )
                                   ])
                                 : _vm._e()
                             ])
@@ -62702,15 +62693,7 @@ var render = function() {
                         _vm.activeActivity.quest
                           ? _c("small", [
                               _vm._v(
-                                "* Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum"
-                              )
-                            ])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        !_vm.activeActivity.quest
-                          ? _c("span", [
-                              _vm._v(
-                                "Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum"
+                                "* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo"
                               )
                             ])
                           : _vm._e()
@@ -62812,10 +62795,10 @@ var render = function() {
                     _c("v-flex", { attrs: { xs10: "", md4: "" } }, [
                       _c("div", { staticClass: "py-5" }),
                       _vm._v(" "),
-                      _vm.step === 1
+                      _vm.step === 2
                         ? _c(
                             "fieldset",
-                            { attrs: { "data-vv-scope": "step-1" } },
+                            { attrs: { "data-vv-scope": "step-2" } },
                             [
                               _c(
                                 "v-layout",
@@ -62879,8 +62862,24 @@ var render = function() {
                                       _vm._v(" "),
                                       _c("br"),
                                       _vm._v(" "),
-                                      _c("span", [_vm._v("Empezar")])
-                                    ]
+                                      _c("span", [_vm._v("Empezar")]),
+                                      _vm._v(" "),
+                                      _c("br"),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "warning" },
+                                          on: {
+                                            click: function($event) {
+                                              _vm.step = --_vm.step
+                                            }
+                                          }
+                                        },
+                                        [_vm._v("atras")]
+                                      )
+                                    ],
+                                    1
                                   )
                                 ],
                                 1
@@ -62890,10 +62889,10 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      _vm.step === 2
+                      _vm.step === 1
                         ? _c(
                             "fieldset",
-                            { attrs: { "data-vv-scope": "step-2" } },
+                            { attrs: { "data-vv-scope": "step-1" } },
                             [
                               _c(
                                 "v-layout",
@@ -62994,19 +62993,6 @@ var render = function() {
                                               }
                                             },
                                             [_vm._v("acceder")]
-                                          ),
-                                          _vm._v(" "),
-                                          _c(
-                                            "v-btn",
-                                            {
-                                              attrs: { color: "warning" },
-                                              on: {
-                                                click: function($event) {
-                                                  _vm.step = --_vm.step
-                                                }
-                                              }
-                                            },
-                                            [_vm._v("atras")]
                                           )
                                         ],
                                         1
@@ -63036,7 +63022,7 @@ var render = function() {
       _c(
         "v-toolbar",
         {
-          staticClass: "indigo white--text elevation-1",
+          staticClass: "header-app white--text elevation-1",
           attrs: { app: "", "clipped-left": "", fixed: "", height: "58" }
         },
         [_c("v-toolbar-title", [_vm._v("Iniciar jornada")])],

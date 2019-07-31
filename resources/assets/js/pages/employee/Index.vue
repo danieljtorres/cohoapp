@@ -19,7 +19,7 @@
         <v-card v-if="activityForStart">
 
           <v-card-text>
-            Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum {{ activityForStart.name }}
+            ¿Estás seguro de querer comenzar la jornada?
           </v-card-text>
 
           <v-card-actions>
@@ -51,10 +51,9 @@
                 v-validate="'required'"
                 data-vv-name="quest"
               ></textarea>
-              <span v-if="errors.has('quest')">{{ errors.collect('quest') }}</span>
+              <span v-if="errors.has('quest')">{{ errors.collect('quest')[0] }}</span>
             </form>
-            <small v-if="activeActivity.quest">* Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum</small>
-            <span v-if="!activeActivity.quest">Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum</span>
+            <small v-if="activeActivity.quest">* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo</small>
           </v-card-text>
 
           <v-card-actions>

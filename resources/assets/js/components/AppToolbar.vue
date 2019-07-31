@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar app clipped-left fixed height="58" class="indigo white--text elevation-1">
+  <v-toolbar app clipped-left fixed height="58" class="header-app white--text elevation-1">
     <v-toolbar-side-icon v-if="authUser.role" class="white--text" @click.stop="toggleDrawer"></v-toolbar-side-icon>
     <v-toolbar-title v-if="authUser.role">COHOAPP</v-toolbar-title>
     <v-toolbar-title v-if="!authUser.role">Trabajando</v-toolbar-title>
@@ -28,11 +28,8 @@
         <v-card-text v-if="authUser.role">
           ¿Estás seguro que salir?
         </v-card-text>
-        <v-card-text v-if="!authUser.role && !activeActivity">
+        <v-card-text v-if="!authUser.role">
           ¿Estás seguro que deseas finalizar tu jornada laboral del dia de hoy?
-        </v-card-text>
-        <v-card-text v-if="!authUser.role && activeActivity">
-          Completa las tareas activas para poder finalizar tu jornada
         </v-card-text>
 
         <v-card-actions>
@@ -58,8 +55,7 @@ export default {
     isLogout: false
   }),
   computed: {
-    authUser() { return this.$store.state.auth.authUser },
-    activeActivity() { return this.$store.state.activities.active }
+    authUser() { return this.$store.state.auth.authUser }
   },
   methods: {
     toggleDrawer() {
@@ -72,7 +68,10 @@ export default {
         })
       } else {
         this.$store.dispatch('auth/logoutEmployee').then((result) => {
-          if (result) this.$router.push('/login')
+          if (result) {
+            this.$router.push('/login')
+            this.$store.commit('activities/SET_ACTIVE', null)
+          }
         })
       }
     }
@@ -84,4 +83,7 @@ export default {
   .avatar-toggle {
     cursor: pointer;
   } 
+  .header-app {
+    background-color: #04091e !important;
+  }
 </style>
