@@ -138,10 +138,24 @@ class UserController {
       const sheet = wb.addWorksheet('Reporte');
 
       sheet.columns = [
-        { header: 'Id', key: 'id' },
-        { header: 'Name', key: 'name' },
-        { header: 'D.O.B.', key: 'DOB' }
+        { header: 'Fecha', key: 'day' },
+        { header: 'Categoria', key: 'category' },
+        { header: 'Actividad', key: 'activity' },
+        { header: 'Dia', key: 'day' },
+        { header: 'Noche', key: 'night' },
+        { header: 'Total Dia + Noche', key: 'total' },
+        { header: 'Totsl OF', key: 'total_of' },
+        { header: 'Horas compensables', key: 'hc' },
       ];
+
+      for (const day of workingDays) {
+        for (const record of day.records) {
+          sheet.addRow({})
+        }
+      }
+
+      sheet.addRow({id: 1, name: 'John Doe', dob: new Date(1970,1,1)})
+      sheet.addRow({id: 2, name: 'Jane Doe', dob: new Date(1965,1,7)})
 
       response.implicitEnd = false
 

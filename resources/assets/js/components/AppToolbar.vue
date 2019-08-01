@@ -1,7 +1,7 @@
 <template>
   <v-toolbar app clipped-left fixed height="58" class="header-app white--text elevation-1">
     <v-toolbar-side-icon v-if="authUser.role" class="white--text" @click.stop="toggleDrawer"></v-toolbar-side-icon>
-    <v-toolbar-title v-if="authUser.role">COHOAPP</v-toolbar-title>
+    <v-toolbar-title v-if="authUser.role">TRITON</v-toolbar-title>
     <v-toolbar-title v-if="!authUser.role">Trabajando</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-menu offset-y v-if="authUser.role">
@@ -39,7 +39,7 @@
             Cancelar
           </v-btn>
 
-          <v-btn color="green darken-1" flat="flat" v-if="!authUser.role" @click="logout">
+          <v-btn color="green darken-1" flat="flat" @click="logout">
             Ok
           </v-btn>
         </v-card-actions>
