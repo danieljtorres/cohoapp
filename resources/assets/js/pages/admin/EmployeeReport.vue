@@ -26,7 +26,9 @@
                     :showWeekNumbers="false"
                     :showDropdowns="false"
                     :ranges="false"
+                    :autoApply="true"
                     v-model="newRecord.start"
+                    @update="setNewRecordEnd"
                   >
                       <div slot="input" slot-scope="picker" style="min-width: 350px;">
                         {{ picker.startDate }}
@@ -43,7 +45,8 @@
                     :showWeekNumbers="false"
                     :showDropdowns="false"
                     :ranges="false"
-                    :minDate="newRecord.start.endDate"
+                    :autoApply="true"
+                    :minDate="newRecord.start.startDate"
                     v-model="newRecord.end"
                   >
                       <div slot="input" slot-scope="picker" style="min-width: 350px;">
@@ -51,13 +54,13 @@
                       </div>
                   </date-range-picker>
                 </v-flex>
-                <v-flex xs12 sm6 md6>
+                <v-flex xs12 sm11 md11>
                   <v-select :items="categories" @input="setCategory" :value="newRecord.category_id" item-text="name" item-value="id" label="Categoria laboral" name="category" data-vv-name="category"></v-select>
                 </v-flex>
-                <!--<v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                <v-flex xs12 sm12 md12>
+                  <h2>Actividades</h2>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
+                <!---<v-flex xs12 sm6 md4>
                   <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -144,28 +147,28 @@
                 </td>
               </tr>
             </template>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="text-xs-center">Total dia</td>
-                <td class="text-xs-center">Total noche</td>
-                <td class="text-xs-center">TOTAL</td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="text-xs-center">{{ getTotals('day') }}</td>
-                <td class="text-xs-center">{{ getTotals('night') }}</td>
-                <td class="text-xs-center">{{ getTotals() }}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
+            <tr v-if="report.length">
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="text-xs-center">Total dia</td>
+              <td class="text-xs-center">Total noche</td>
+              <td class="text-xs-center">TOTAL</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr v-if="report.length">
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="text-xs-center">{{ getTotals('day') }}</td>
+              <td class="text-xs-center">{{ getTotals('night') }}</td>
+              <td class="text-xs-center">{{ getTotals() }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
           </tbody>
           <tbody v-if="!report.length">
             <tr>
@@ -181,6 +184,7 @@
 <script>
 import DateRangePicker from 'vue2-daterange-picker'
 import moment from 'moment'
+import { constants } from 'crypto';
 
 const momentnow = moment()
 
@@ -286,6 +290,10 @@ export default {
         }
       }
       return total
+    },
+    setNewRecordEnd(e) {
+      this.newRecord.end.startDate = e.startDate
+      this.newRecord.end.endDate = e.endDate
     }
   },
   filters: {

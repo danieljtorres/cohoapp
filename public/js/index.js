@@ -4520,6 +4520,11 @@ __webpack_require__.r(__webpack_exports__);
         title: 'Empleados',
         icon: 'people_outline',
         link: '/admin/empleados'
+      }, //{ title: 'Categorias Laborales', icon: 'work', link: '/admin/categorias-laborales' },
+      {
+        title: 'Actividades',
+        icon: 'work_outline',
+        link: '/admin/actividades'
       }]
     };
   },
@@ -4756,6 +4761,65 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function () {
     var _created = _asyncToGenerator(
@@ -4784,6 +4848,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   }(),
   data: function data() {
     return {
+      isAction: false,
+      act: {
+        activity_id: null,
+        name: '',
+        quest: '',
+        compute: 1
+      },
+      actForDelete: null,
+      search: '',
       headersForActivities: [{
         text: '#',
         value: 'id'
@@ -4792,14 +4865,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         value: 'name',
         align: 'left'
       }, {
-        text: 'Icono',
-        value: 'icon',
-        align: 'left',
-        sortable: false
-      }, {
         text: 'Pregunta',
         value: 'quest',
         align: 'left',
+        sortable: false
+      }, {
+        text: 'Computa',
+        value: 'compute',
+        align: 'left',
+        sortable: false
+      }, {
+        text: 'Acciones',
+        align: 'center',
         sortable: false
       }]
     };
@@ -4807,6 +4884,37 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   computed: {
     activities: function activities() {
       return this.$store.state.activities.list;
+    }
+  },
+  methods: {
+    setActForEdit: function setActForEdit(item) {
+      this.act.activity_id = item.id;
+      this.act.name = item.name;
+      this.act.quest = item.quest;
+      this.act.compute = item.compute;
+      this.isAction = 'edit';
+    },
+    setActForDelete: function setActForDelete(item) {
+      this.actForDelete = item.id;
+    },
+    doAction: function doAction() {
+      var vue = this;
+      var catData, promise;
+
+      if (this.isAction == 'save') {
+        catData = Object.assign({}, this.act);
+        delete catData.activity_id;
+        promise = this.$store.dispatch('activities/save', catData);
+      } else if (this.isAction == 'edit') {
+        promise = this.$store.dispatch('activities/edit', this.act);
+      }
+
+      promise.then(function (result) {
+        console.log(result);
+        vue.isAction = false;
+      })["catch"](function (err) {
+        console.log(err);
+      });
     }
   }
 });
@@ -5034,6 +5142,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue2_daterange_picker__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue2-daterange-picker */ "./node_modules/vue2-daterange-picker/src/index.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! crypto */ "./node_modules/crypto-browserify/index.js");
+/* harmony import */ var crypto__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(crypto__WEBPACK_IMPORTED_MODULE_3__);
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -5220,6 +5330,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+
 
 
 var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
@@ -5420,6 +5534,10 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
       }
 
       return total;
+    },
+    setNewRecordEnd: function setNewRecordEnd(e) {
+      this.newRecord.end.startDate = e.startDate;
+      this.newRecord.end.endDate = e.endDate;
     }
   },
   filters: {
@@ -5802,6 +5920,20 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -17706,10 +17838,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _args, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, dependencies, deprecated, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"C:\\\\Desarrollo\\\\cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"C:\\\\Desarrollo\\\\cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
+module.exports = JSON.parse("{\"_from\":\"elliptic@^6.0.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"range\",\"registry\":true,\"raw\":\"elliptic@^6.0.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"^6.0.0\",\"saveSpec\":null,\"fetchSpec\":\"^6.0.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_shasum\":\"2b8ed4c891b7de3200e14412a5b8248c7af505ca\",\"_spec\":\"elliptic@^6.0.0\",\"_where\":\"C:\\\\Desarrollo\\\\cohoapp\\\\node_modules\\\\browserify-sign\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"bundleDependencies\":false,\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"deprecated\":false,\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
 
 /***/ }),
 
@@ -60888,7 +61020,7 @@ var render = function() {
                     [_vm._v("\n          Cancelar\n        ")]
                   ),
                   _vm._v(" "),
-                  !_vm.authUser.role || !_vm.activeActivity
+                  !_vm.authUser.role
                     ? _c(
                         "v-btn",
                         {
@@ -61049,51 +61181,257 @@ var render = function() {
         "v-container",
         { attrs: { fluid: "" } },
         [
-          _c("v-data-table", {
-            staticClass: "elevation-1",
-            attrs: { headers: _vm.headersForActivities, items: _vm.activities },
-            scopedSlots: _vm._u([
-              {
-                key: "items",
-                fn: function(props) {
-                  return [
-                    _c("td", [_vm._v(_vm._s(props.item.id))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(props.item.name))]),
-                    _vm._v(" "),
-                    _c("td", [
-                      props.item.icon
-                        ? _c("img", {
-                            staticClass: "mr-3",
-                            attrs: {
-                              src: "/images/icons/" + props.item.icon + ".png",
-                              alt: "",
-                              width: "40"
+          _c(
+            "v-dialog",
+            { attrs: { value: _vm.isAction, "max-width": "500px" } },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", [
+                    _c("span", { staticClass: "headline" }, [
+                      _vm._v(
+                        _vm._s(_vm.isAction == "edit" ? "Editar" : "Nueva") +
+                          " actividad"
+                      )
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-container",
+                        { attrs: { "grid-list-md": "" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { wrap: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "", sm12: "", md4: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: { label: "Nombre" },
+                                    model: {
+                                      value: _vm.act.name,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.act, "name", $$v)
+                                      },
+                                      expression: "act.name"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                {
+                                  staticClass: "text-xs-center",
+                                  attrs: { xs12: "", sm6: "", md4: "" }
+                                },
+                                [
+                                  _c("label", { attrs: { for: "Pregunta" } }, [
+                                    _vm._v("Pregunta")
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-switch", {
+                                    staticClass: "mt-0",
+                                    staticStyle: {
+                                      display: "flex",
+                                      "justify-content": "center"
+                                    },
+                                    model: {
+                                      value: _vm.act.quest,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.act, "quest", $$v)
+                                      },
+                                      expression: "act.quest"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "", sm6: "", md4: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: { type: "number", label: "Computa" },
+                                    model: {
+                                      value: _vm.act.compute,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.act, "compute", $$v)
+                                      },
+                                      expression: "act.compute"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", flat: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.isAction = false
                             }
-                          })
-                        : _vm._e()
-                    ]),
-                    _vm._v(" "),
-                    _c(
-                      "td",
-                      [
-                        _c("v-switch", {
-                          model: {
-                            value: props.item.icon,
-                            callback: function($$v) {
-                              _vm.$set(props.item, "icon", $$v)
-                            },
-                            expression: "props.item.icon"
                           }
-                        })
-                      ],
-                      1
-                    )
-                  ]
-                }
-              }
-            ])
-          })
+                        },
+                        [_vm._v("Cancelar")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", flat: "" },
+                          on: { click: _vm.doAction }
+                        },
+                        [_vm._v("Guardar")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-title",
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "mb-2",
+                      attrs: { color: "primary", dark: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.isAction = "save"
+                        }
+                      }
+                    },
+                    [_vm._v("Nuevo actividad")]
+                  ),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c("v-text-field", {
+                    staticClass: "pt-0",
+                    attrs: {
+                      "append-icon": "search",
+                      label: "Buscar...",
+                      "single-line": "",
+                      "hide-details": ""
+                    },
+                    model: {
+                      value: _vm.search,
+                      callback: function($$v) {
+                        _vm.search = $$v
+                      },
+                      expression: "search"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-data-table", {
+                staticClass: "elevation-1",
+                attrs: {
+                  headers: _vm.headersForActivities,
+                  items: _vm.activities
+                },
+                scopedSlots: _vm._u([
+                  {
+                    key: "items",
+                    fn: function(props) {
+                      return [
+                        _c("td", [_vm._v(_vm._s(props.item.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(props.item.name))]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(props.item.quest ? "SI" : "NO") +
+                              "\n          "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(props.item.compute) +
+                              "\n          "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c(
+                          "td",
+                          { staticClass: "text-xs-center" },
+                          [
+                            _c(
+                              "v-icon",
+                              {
+                                staticClass: "mr-2",
+                                attrs: { small: "" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.setActForEdit(props.item)
+                                  }
+                                }
+                              },
+                              [_vm._v("\n              edit\n            ")]
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-icon",
+                              {
+                                attrs: { small: "" },
+                                on: {
+                                  click: function($event) {
+                                    return _vm.setActForDelete(props.item)
+                                  }
+                                }
+                              },
+                              [_vm._v("\n              delete\n            ")]
+                            )
+                          ],
+                          1
+                        )
+                      ]
+                    }
+                  }
+                ])
+              })
+            ],
+            1
+          )
         ],
         1
       )
@@ -61533,8 +61871,10 @@ var render = function() {
                                       timePicker24Hour: true,
                                       showWeekNumbers: false,
                                       showDropdowns: false,
-                                      ranges: false
+                                      ranges: false,
+                                      autoApply: true
                                     },
+                                    on: { update: _vm.setNewRecordEnd },
                                     scopedSlots: _vm._u([
                                       {
                                         key: "input",
@@ -61586,7 +61926,8 @@ var render = function() {
                                       showWeekNumbers: false,
                                       showDropdowns: false,
                                       ranges: false,
-                                      minDate: _vm.newRecord.start.endDate
+                                      autoApply: true,
+                                      minDate: _vm.newRecord.start.startDate
                                     },
                                     scopedSlots: _vm._u([
                                       {
@@ -61624,7 +61965,7 @@ var render = function() {
                               _vm._v(" "),
                               _c(
                                 "v-flex",
-                                { attrs: { xs12: "", sm6: "", md6: "" } },
+                                { attrs: { xs12: "", sm11: "", md11: "" } },
                                 [
                                   _c("v-select", {
                                     attrs: {
@@ -61640,6 +61981,12 @@ var render = function() {
                                   })
                                 ],
                                 1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "", sm12: "", md12: "" } },
+                                [_c("h2", [_vm._v("Actividades")])]
                               )
                             ],
                             1
@@ -61956,57 +62303,61 @@ var render = function() {
                       ]
                     }),
                     _vm._v(" "),
-                    _c("tr", [
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v("Total dia")
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v("Total noche")
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v("TOTAL")
-                      ]),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td")
-                    ]),
+                    _vm.report.length
+                      ? _c("tr", [
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v("Total dia")
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v("Total noche")
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v("TOTAL")
+                          ]),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td")
+                        ])
+                      : _vm._e(),
                     _vm._v(" "),
-                    _c("tr", [
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v(_vm._s(_vm.getTotals("day")))
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v(_vm._s(_vm.getTotals("night")))
-                      ]),
-                      _vm._v(" "),
-                      _c("td", { staticClass: "text-xs-center" }, [
-                        _vm._v(_vm._s(_vm.getTotals()))
-                      ]),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td"),
-                      _vm._v(" "),
-                      _c("td")
-                    ])
+                    _vm.report.length
+                      ? _c("tr", [
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v(_vm._s(_vm.getTotals("day")))
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v(_vm._s(_vm.getTotals("night")))
+                          ]),
+                          _vm._v(" "),
+                          _c("td", { staticClass: "text-xs-center" }, [
+                            _vm._v(_vm._s(_vm.getTotals()))
+                          ]),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td")
+                        ])
+                      : _vm._e()
                   ],
                   2
                 ),
@@ -62766,22 +63117,70 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _c("v-data-table", {
-            staticClass: "elevation-1",
-            attrs: { headers: _vm.headersForCategories, items: _vm.categories },
-            scopedSlots: _vm._u([
-              {
-                key: "items",
-                fn: function(props) {
-                  return [
-                    _c("td", [_vm._v(_vm._s(props.item.id))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(props.item.name))])
-                  ]
-                }
-              }
-            ])
-          })
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-card-title",
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "mb-2",
+                      attrs: { color: "primary", dark: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.isAction = "save"
+                        }
+                      }
+                    },
+                    [_vm._v("Nuevo empleado")]
+                  ),
+                  _vm._v(" "),
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c("v-text-field", {
+                    staticClass: "pt-0",
+                    attrs: {
+                      "append-icon": "search",
+                      label: "Buscar...",
+                      "single-line": "",
+                      "hide-details": ""
+                    },
+                    model: {
+                      value: _vm.search,
+                      callback: function($$v) {
+                        _vm.search = $$v
+                      },
+                      expression: "search"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-data-table", {
+                staticClass: "elevation-1",
+                attrs: {
+                  headers: _vm.headersForCategories,
+                  items: _vm.categories
+                },
+                scopedSlots: _vm._u([
+                  {
+                    key: "items",
+                    fn: function(props) {
+                      return [
+                        _c("td", [_vm._v(_vm._s(props.item.id))]),
+                        _vm._v(" "),
+                        _c("td", [_vm._v(_vm._s(props.item.name))])
+                      ]
+                    }
+                  }
+                ])
+              })
+            ],
+            1
+          )
         ],
         1
       )
@@ -105834,6 +106233,20 @@ var http = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_0__["axiosInstance"];
     }, function (error) {
       return Promise.reject(error);
     });
+  },
+  save: function save(data) {
+    return http.post('working-activities', data).then(function (response) {
+      if (response.data) return response.data.data;
+    }, function (error) {
+      return Promise.reject(error);
+    });
+  },
+  edit: function edit(data) {
+    return http.put('working-activities', data).then(function (response) {
+      if (response.data) return response.data.data;
+    }, function (error) {
+      return Promise.reject(error);
+    });
   }
 });
 
@@ -107679,6 +108092,87 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return end;
+    }(),
+    save: function () {
+      var _save = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(_ref5, data) {
+        var dispatch;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                dispatch = _ref5.dispatch;
+                _context5.prev = 1;
+                console.log(this.$sv.activityService);
+                _context5.next = 5;
+                return this.$sv.activityService.save(data);
+
+              case 5:
+                _context5.next = 7;
+                return dispatch('getAll');
+
+              case 7:
+                return _context5.abrupt("return", true);
+
+              case 10:
+                _context5.prev = 10;
+                _context5.t0 = _context5["catch"](1);
+                return _context5.abrupt("return", Promise.reject(_context5.t0));
+
+              case 13:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this, [[1, 10]]);
+      }));
+
+      function save(_x7, _x8) {
+        return _save.apply(this, arguments);
+      }
+
+      return save;
+    }(),
+    edit: function () {
+      var _edit = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(_ref6, data) {
+        var dispatch;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                dispatch = _ref6.dispatch;
+                _context6.prev = 1;
+                _context6.next = 4;
+                return this.$sv.activityService.edit(data);
+
+              case 4:
+                _context6.next = 6;
+                return dispatch('getAll');
+
+              case 6:
+                return _context6.abrupt("return", true);
+
+              case 9:
+                _context6.prev = 9;
+                _context6.t0 = _context6["catch"](1);
+                return _context6.abrupt("return", Promise.reject(_context6.t0));
+
+              case 12:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this, [[1, 9]]);
+      }));
+
+      function edit(_x9, _x10) {
+        return _edit.apply(this, arguments);
+      }
+
+      return edit;
     }()
   }
 });

@@ -53,6 +53,25 @@ export default {
       } catch (error) {
         return Promise.reject(error)
       }
-    }
+    },
+    async save({ dispatch }, data) {
+      try {
+        console.log(this.$sv.activityService)
+        await this.$sv.activityService.save(data)
+        await dispatch('getAll')
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+    async edit({ dispatch }, data) {
+      try {
+        await this.$sv.activityService.edit(data)
+        await dispatch('getAll')
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
   }
 }
