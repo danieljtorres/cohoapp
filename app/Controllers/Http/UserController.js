@@ -5,6 +5,7 @@ const WorkingDay = use('App/Models/WorkingDay')
 const Mail = use('Mail')
 const Helpers = use('Helpers')
 const Excel = require('exceljs');
+const moment = require('moment')
 
 class UserController {
   async getAdmins({ response }) {
@@ -118,7 +119,7 @@ class UserController {
     }
   }
 
-  async exportToExcel({ request, response }) {
+  async getEmployeesReportToExcel({ request, response }) {
     const { start_filter, end_filter, user_id } = request.all()
     
     try {
@@ -131,6 +132,8 @@ class UserController {
         builder.with('activity')
       }).with('category').fetch()
 
+      const fileName = 'start-'+start_filter+'-end-'+end_filter+'-'+moment().unix()+'.xlsx'
+
       const wb = new Excel.Workbook();
       const sheet = wb.addWorksheet('Reporte');
 
@@ -140,12 +143,16 @@ class UserController {
         { header: 'D.O.B.', key: 'DOB' }
       ];
 
-      sheet.addRow({id: 1, name: 'John Doe', dob: new Date(1970,1,1)});
-      sheet.addRow({id: 2, name: 'Jane Doe', dob: new Date(1965,1,7)});
+      response.implicitEnd = false
+
+      response.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      response.header("Content-Disposition", "attachment; filename=" + fileName);
 
       wb.xlsx.write(response.response)
-      .then(function() {
-        response.send(200)
+      .then(function(data) {
+        response.send(data)
+      }).catch(err => {
+        console.log(err)
       });
 
     } catch (error) {

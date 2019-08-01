@@ -41,7 +41,7 @@ Route.group(() => {
   Route.delete('users', 'UserController.delete').middleware('auth')
 
   Route.get('users/employees/report', 'UserController.getEmployeesReport').middleware('auth')
-  Route.get('users/employees/report', 'UserController.getEmployeesReport').middleware('auth')
+  Route.get('users/employees/report/excel', 'UserController.getEmployeesReportToExcel')//.middleware('auth')
 }).prefix("api/v1")
 
 Route.any('*', ({view}) =>  view.render('app'))

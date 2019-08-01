@@ -47,6 +47,15 @@ export default {
         return Promise.reject(error)
       }
     },
+    async getEmployeeReportToExcel({ commit }, data) {
+      try {
+        const report = await this.$sv.userService.getEmployeeReportToExcel(data)
+        console.log(report)
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
     async saveAdmin({ dispatch }, data) {
       try {
         await this.$sv.userService.saveAdmin(data)

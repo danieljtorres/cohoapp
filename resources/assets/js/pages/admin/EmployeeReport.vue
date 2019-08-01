@@ -60,7 +60,7 @@
                 <v-flex xs12 sm12 md12>
                   <h2>Actividades</h2>
                 </v-flex>
-                <!---<v-flex xs12 sm6 md4>
+                <!--<v-flex xs12 sm6 md4>
                   <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
@@ -74,7 +74,7 @@
       </v-dialog>
       <v-card>
         <v-card-title>
-          <v-btn color="primary" dark class="mb-2" @click="isNewRecord = true">Nuevo registro</v-btn>
+          <!--<v-btn color="primary" dark class="mb-2" @click="isNewRecord = true">Nuevo registro</v-btn>-->
           <v-btn color="green" v-if="report.length" dark class="mb-2" @click="saveToExcel">Exportar</v-btn>
           <v-spacer></v-spacer>
           <v-select
@@ -89,16 +89,16 @@
 
         <table class="v-datatable v-table theme--light">
           <thead>
-            <tr>
-              <th class="column text-xs-left">Fecha</th>
-              <th class="column text-xs-left">Categoria</th>
-              <th class="column text-xs-left">Actividad</th>
-              <th class="column text-xs-left">Dia</th>
-              <th class="column text-xs-left">Noche</th>
-              <th class="column text-xs-left">Total Hrs</th>
-              <th class="column text-xs-left">Total OF</th>
-              <th class="column text-xs-left">Horas Compensables</th>
-              <th class="column text-xs-left"></th>
+            <tr class="blue darken-3">
+              <th class="column text-xs-left white--text">Fecha</th>
+              <th class="column text-xs-left white--text">Categoria</th>
+              <th class="column text-xs-left white--text">Actividad</th>
+              <th class="column text-xs-left white--text">Dia</th>
+              <th class="column text-xs-left white--text">Noche</th>
+              <th class="column text-xs-left white--text">Total Hrs</th>
+              <th class="column text-xs-left white--text">Total OF</th>
+              <th class="column text-xs-left white--text">Horas Compensables</th>
+              <th class="column text-xs-left white--text"></th>
             </tr>
           </thead>
           <tbody>
@@ -109,10 +109,10 @@
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">
                 <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
-                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end) : ''}}</td>
-                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end, record.activity.compute) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end, record.activity.compute) : ''}}</td>
                 <td class="text-xs-center">
-                  <v-chip outline color="secondary">{{getHours(record.start, record.end)}}</v-chip>
+                  <v-chip outline color="secondary">{{ getHours(record.start, record.end, record.activity.compute) }}</v-chip>
                 </td>
                 <td></td>
                 <td></td>
@@ -147,13 +147,13 @@
                 </td>
               </tr>
             </template>
-            <tr v-if="report.length">
+            <tr v-if="report.length" class="blue darken-1">
               <td></td>
               <td></td>
               <td></td>
-              <td class="text-xs-center">Total dia</td>
-              <td class="text-xs-center">Total noche</td>
-              <td class="text-xs-center">TOTAL</td>
+              <td class="text-xs-center white--text">Total dia</td>
+              <td class="text-xs-center white--text">Total noche</td>
+              <td class="text-xs-center white--text">TOTAL</td>
               <td></td>
               <td></td>
               <td></td>
@@ -273,20 +273,20 @@ export default {
       });
     },
     saveToExcel() {
-
+      this.$store.dispatch('users/getEmployeeReportToExcel', this.params)
     },
-    getHours(start, end) {
+    getHours(start, end, compute) {
       const startMoment = this.$moment.unix(start)
       const endMoment = this.$moment.unix(end)
 
-      return Math.round(endMoment.diff(startMoment, 'hours', true) * 100) / 100
+      return Math.round((endMoment.diff(startMoment, 'hours', true) * 100) * parseFloat(compute)) / 100
     },
     getTotals(type = null) {
       let total = 0
       for (const day of this.report) {
         for (const record of day.records) {
-          if (type == record.schedule) total += this.getHours(record.start, record.end)
-          if (type == null) total += this.getHours(record.start, record.end)
+          if (type == record.schedule) total += this.getHours(record.start, record.end, record.activity.compute)
+          if (type == null) total += this.getHours(record.start, record.end, record.activity.compute)
         }
       }
       return total
@@ -321,15 +321,3 @@ export default {
     border-right: 1px solid rgba(0,0,0,.12);
   }
 </style>
-
-/*
-<tr v-for="(record) in report" :key="record.id">
-  <td>{{ record.workingDay.start | formatDate($moment, 'MM/DD/YYYY') }}</td>
-  <td>{{ record.workingDay.category.name }}</td>
-  <td>{{ record.activity.name }}</td>
-  <td></td>
-  <td></td>
-  <td><v-chip outline color="secondary">{{ getHours(record.start, record.end) }}</v-chip></td>
-</tr>
-    
-*/

@@ -5477,11 +5477,13 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
         _this2.isEditRecord = false;
       })["catch"](function (err) {});
     },
-    saveToExcel: function saveToExcel() {},
-    getHours: function getHours(start, end) {
+    saveToExcel: function saveToExcel() {
+      this.$store.dispatch('users/getEmployeeReportToExcel', this.params);
+    },
+    getHours: function getHours(start, end, compute) {
       var startMoment = this.$moment.unix(start);
       var endMoment = this.$moment.unix(end);
-      return Math.round(endMoment.diff(startMoment, 'hours', true) * 100) / 100;
+      return Math.round(endMoment.diff(startMoment, 'hours', true) * 100 * parseFloat(compute)) / 100;
     },
     getTotals: function getTotals() {
       var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
@@ -5500,8 +5502,8 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
           try {
             for (var _iterator2 = day.records[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
               var record = _step2.value;
-              if (type == record.schedule) total += this.getHours(record.start, record.end);
-              if (type == null) total += this.getHours(record.start, record.end);
+              if (type == record.schedule) total += this.getHours(record.start, record.end, record.activity.compute);
+              if (type == null) total += this.getHours(record.start, record.end, record.activity.compute);
             }
           } catch (err) {
             _didIteratorError2 = true;
@@ -17838,10 +17840,10 @@ utils.intFromLE = intFromLE;
 /*!********************************************!*\
   !*** ./node_modules/elliptic/package.json ***!
   \********************************************/
-/*! exports provided: _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _shasum, _spec, _where, author, bugs, bundleDependencies, dependencies, deprecated, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
+/*! exports provided: _args, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_from\":\"elliptic@^6.0.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"range\",\"registry\":true,\"raw\":\"elliptic@^6.0.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"^6.0.0\",\"saveSpec\":null,\"fetchSpec\":\"^6.0.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_shasum\":\"2b8ed4c891b7de3200e14412a5b8248c7af505ca\",\"_spec\":\"elliptic@^6.0.0\",\"_where\":\"C:\\\\Desarrollo\\\\cohoapp\\\\node_modules\\\\browserify-sign\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"bundleDependencies\":false,\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"deprecated\":false,\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"C:\\\\Desarrollo\\\\cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"C:\\\\Desarrollo\\\\cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
 
 /***/ }),
 
@@ -62010,20 +62012,6 @@ var render = function() {
               _c(
                 "v-card-title",
                 [
-                  _c(
-                    "v-btn",
-                    {
-                      staticClass: "mb-2",
-                      attrs: { color: "primary", dark: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.isNewRecord = true
-                        }
-                      }
-                    },
-                    [_vm._v("Nuevo registro")]
-                  ),
-                  _vm._v(" "),
                   _vm.report.length
                     ? _c(
                         "v-btn",
@@ -62060,40 +62048,56 @@ var render = function() {
               _vm._v(" "),
               _c("table", { staticClass: "v-datatable v-table theme--light" }, [
                 _c("thead", [
-                  _c("tr", [
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Fecha")
-                    ]),
+                  _c("tr", { staticClass: "blue darken-3" }, [
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Fecha")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Categoria")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Categoria")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Actividad")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Actividad")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Dia")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Dia")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Noche")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Noche")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Total Hrs")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Total Hrs")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Total OF")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Total OF")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" }, [
-                      _vm._v("Horas Compensables")
-                    ]),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Horas Compensables")]
+                    ),
                     _vm._v(" "),
-                    _c("th", { staticClass: "column text-xs-left" })
+                    _c("th", { staticClass: "column text-xs-left white--text" })
                   ])
                 ]),
                 _vm._v(" "),
@@ -62156,7 +62160,11 @@ var render = function() {
                               _vm._v(
                                 _vm._s(
                                   record.schedule == "day"
-                                    ? _vm.getHours(record.start, record.end)
+                                    ? _vm.getHours(
+                                        record.start,
+                                        record.end,
+                                        record.activity.compute
+                                      )
                                     : ""
                                 )
                               )
@@ -62166,7 +62174,11 @@ var render = function() {
                               _vm._v(
                                 _vm._s(
                                   record.schedule == "night"
-                                    ? _vm.getHours(record.start, record.end)
+                                    ? _vm.getHours(
+                                        record.start,
+                                        record.end,
+                                        record.activity.compute
+                                      )
                                     : ""
                                 )
                               )
@@ -62184,7 +62196,11 @@ var render = function() {
                                   [
                                     _vm._v(
                                       _vm._s(
-                                        _vm.getHours(record.start, record.end)
+                                        _vm.getHours(
+                                          record.start,
+                                          record.end,
+                                          record.activity.compute
+                                        )
                                       )
                                     )
                                   ]
@@ -62304,24 +62320,30 @@ var render = function() {
                     }),
                     _vm._v(" "),
                     _vm.report.length
-                      ? _c("tr", [
+                      ? _c("tr", { staticClass: "blue darken-1" }, [
                           _c("td"),
                           _vm._v(" "),
                           _c("td"),
                           _vm._v(" "),
                           _c("td"),
                           _vm._v(" "),
-                          _c("td", { staticClass: "text-xs-center" }, [
-                            _vm._v("Total dia")
-                          ]),
+                          _c(
+                            "td",
+                            { staticClass: "text-xs-center white--text" },
+                            [_vm._v("Total dia")]
+                          ),
                           _vm._v(" "),
-                          _c("td", { staticClass: "text-xs-center" }, [
-                            _vm._v("Total noche")
-                          ]),
+                          _c(
+                            "td",
+                            { staticClass: "text-xs-center white--text" },
+                            [_vm._v("Total noche")]
+                          ),
                           _vm._v(" "),
-                          _c("td", { staticClass: "text-xs-center" }, [
-                            _vm._v("TOTAL")
-                          ]),
+                          _c(
+                            "td",
+                            { staticClass: "text-xs-center white--text" },
+                            [_vm._v("TOTAL")]
+                          ),
                           _vm._v(" "),
                           _c("td"),
                           _vm._v(" "),
@@ -106468,6 +106490,11 @@ var http = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_0__["axiosInstance"];
     }, function (error) {
       return Promise.reject(error);
     });
+  },
+  getEmployeeReportToExcel: function getEmployeeReportToExcel(params) {
+    window.open('/api/v1/users/employees/report/excel?' + Object.entries(params).map(function (e) {
+      return e.join('=');
+    }).join('&'));
   }
 });
 
@@ -107169,8 +107196,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EmployeeReport_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EmployeeReport.vue?vue&type=script&lang=js& */ "./resources/assets/js/pages/admin/EmployeeReport.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _EmployeeReport_vue_vue_type_style_index_0_id_a7fe5a02_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EmployeeReport.vue?vue&type=style&index=0&id=a7fe5a02&scoped=true&lang=css& */ "./resources/assets/js/pages/admin/EmployeeReport.vue?vue&type=style&index=0&id=a7fe5a02&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-/* harmony import */ var _EmployeeReport_vue_vue_type_custom_index_0_blockType_tr_v_for_record_20in_20report_3Akey_record_id__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./EmployeeReport.vue?vue&type=custom&index=0&blockType=tr&v-for=(record)%20in%20report&%3Akey=record.id */ "./resources/assets/js/pages/admin/EmployeeReport.vue?vue&type=custom&index=0&blockType=tr&v-for=(record)%20in%20report&%3Akey=record.id");
-/* harmony import */ var _EmployeeReport_vue_vue_type_custom_index_0_blockType_tr_v_for_record_20in_20report_3Akey_record_id__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_EmployeeReport_vue_vue_type_custom_index_0_blockType_tr_v_for_record_20in_20report_3Akey_record_id__WEBPACK_IMPORTED_MODULE_4__);
 
 
 
@@ -107190,25 +107215,10 @@ var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_
   
 )
 
-/* custom blocks */
-
-if (typeof _EmployeeReport_vue_vue_type_custom_index_0_blockType_tr_v_for_record_20in_20report_3Akey_record_id__WEBPACK_IMPORTED_MODULE_4___default.a === 'function') _EmployeeReport_vue_vue_type_custom_index_0_blockType_tr_v_for_record_20in_20report_3Akey_record_id__WEBPACK_IMPORTED_MODULE_4___default()(component)
-
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/assets/js/pages/admin/EmployeeReport.vue"
 /* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/assets/js/pages/admin/EmployeeReport.vue?vue&type=custom&index=0&blockType=tr&v-for=(record)%20in%20report&%3Akey=record.id":
-/*!***********************************************************************************************************************************************!*\
-  !*** ./resources/assets/js/pages/admin/EmployeeReport.vue?vue&type=custom&index=0&blockType=tr&v-for=(record)%20in%20report&%3Akey=record.id ***!
-  \***********************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-
 
 /***/ }),
 
@@ -108652,25 +108662,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return getEmployeeReport;
     }(),
-    saveAdmin: function () {
-      var _saveAdmin = _asyncToGenerator(
+    getEmployeeReportToExcel: function () {
+      var _getEmployeeReportToExcel = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(_ref5, data) {
-        var dispatch;
+        var commit, report;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                dispatch = _ref5.dispatch;
+                commit = _ref5.commit;
                 _context5.prev = 1;
                 _context5.next = 4;
-                return this.$sv.userService.saveAdmin(data);
+                return this.$sv.userService.getEmployeeReportToExcel(data);
 
               case 4:
-                _context5.next = 6;
-                return dispatch('getAdmins');
-
-              case 6:
+                report = _context5.sent;
+                console.log(report);
                 return _context5.abrupt("return", true);
 
               case 9:
@@ -108686,32 +108694,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5, this, [[1, 9]]);
       }));
 
-      function saveAdmin(_x8, _x9) {
-        return _saveAdmin.apply(this, arguments);
+      function getEmployeeReportToExcel(_x8, _x9) {
+        return _getEmployeeReportToExcel.apply(this, arguments);
       }
 
-      return saveAdmin;
+      return getEmployeeReportToExcel;
     }(),
-    getAdmins: function () {
-      var _getAdmins = _asyncToGenerator(
+    saveAdmin: function () {
+      var _saveAdmin = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(_ref6) {
-        var commit, list;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee6(_ref6, data) {
+        var dispatch;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
-                commit = _ref6.commit;
+                dispatch = _ref6.dispatch;
                 _context6.prev = 1;
                 _context6.next = 4;
-                return this.$sv.userService.getAdmins();
+                return this.$sv.userService.saveAdmin(data);
 
               case 4:
-                list = _context6.sent;
-                commit('SET_LIST', {
-                  type: 'admins',
-                  data: list
-                });
+                _context6.next = 6;
+                return dispatch('getAdmins');
+
+              case 6:
                 return _context6.abrupt("return", true);
 
               case 9:
@@ -108727,7 +108734,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee6, this, [[1, 9]]);
       }));
 
-      function getAdmins(_x10) {
+      function saveAdmin(_x10, _x11) {
+        return _saveAdmin.apply(this, arguments);
+      }
+
+      return saveAdmin;
+    }(),
+    getAdmins: function () {
+      var _getAdmins = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(_ref7) {
+        var commit, list;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                commit = _ref7.commit;
+                _context7.prev = 1;
+                _context7.next = 4;
+                return this.$sv.userService.getAdmins();
+
+              case 4:
+                list = _context7.sent;
+                commit('SET_LIST', {
+                  type: 'admins',
+                  data: list
+                });
+                return _context7.abrupt("return", true);
+
+              case 9:
+                _context7.prev = 9;
+                _context7.t0 = _context7["catch"](1);
+                return _context7.abrupt("return", Promise.reject(_context7.t0));
+
+              case 12:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this, [[1, 9]]);
+      }));
+
+      function getAdmins(_x12) {
         return _getAdmins.apply(this, arguments);
       }
 
@@ -108736,42 +108784,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     "delete": function () {
       var _delete2 = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee7(_ref7, data) {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee8(_ref8, data) {
         var dispatch;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee7$(_context7) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
-                dispatch = _ref7.dispatch;
-                _context7.prev = 1;
-                _context7.next = 4;
+                dispatch = _ref8.dispatch;
+                _context8.prev = 1;
+                _context8.next = 4;
                 return this.$sv.userService["delete"](data);
 
               case 4:
-                _context7.next = 6;
+                _context8.next = 6;
                 return dispatch('getAdmins');
 
               case 6:
-                _context7.next = 8;
+                _context8.next = 8;
                 return dispatch('getEmployees');
 
               case 8:
-                return _context7.abrupt("return", true);
+                return _context8.abrupt("return", true);
 
               case 11:
-                _context7.prev = 11;
-                _context7.t0 = _context7["catch"](1);
-                return _context7.abrupt("return", Promise.reject(_context7.t0));
+                _context8.prev = 11;
+                _context8.t0 = _context8["catch"](1);
+                return _context8.abrupt("return", Promise.reject(_context8.t0));
 
               case 14:
               case "end":
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this, [[1, 11]]);
+        }, _callee8, this, [[1, 11]]);
       }));
 
-      function _delete(_x11, _x12) {
+      function _delete(_x13, _x14) {
         return _delete2.apply(this, arguments);
       }
 

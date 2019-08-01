@@ -59,4 +59,7 @@ export default {
         return Promise.reject(error);
       })
   },
+  getEmployeeReportToExcel (params) {
+    window.open('/api/v1/users/employees/report/excel?'+Object.entries(params).map(e => e.join('=')).join('&'))
+  }
 }
