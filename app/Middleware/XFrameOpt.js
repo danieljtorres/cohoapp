@@ -9,7 +9,7 @@ class XFrameOpt {
    * @param {Request} ctx.request
    * @param {Function} next
    */
-  async handle ({ request }, next) {
+  async handle ({ request, response }, next) {
     // call next to advance the request
     response.header('X-FRAME-OPTIONS', 'ALLOW-FROM ' + request.url())
     await next()
