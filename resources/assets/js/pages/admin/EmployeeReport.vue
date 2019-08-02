@@ -79,7 +79,7 @@
           <tbody>
             <template v-for="day in report">
               <tr :key="day.id">
-                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 1" class="td-hover" @click="openDayRecordDialog(day.id)">
+                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2" class="td-hover" @click="openDayRecordDialog(day.id)">
                   {{ day.start | formatDate($moment, 'MM/DD/YYYY') }}
                 </td>
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2">{{ day.category.name }}</td>
