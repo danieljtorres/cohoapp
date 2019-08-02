@@ -4,7 +4,7 @@
       <v-container grid-list-md text-xs-center>
         <v-layout row wrap>
           <v-flex v-for="{ id, name, icon } in activities" :key="id" xs12>
-            <v-card @click="setActivityForStart({ id, name })" class="elevation-1" :class="{ 'active-activity elevation-0': activeActivity && activeActivity.id === id }">
+            <v-card @click="setActivityForStart({ id, name })" class="elevation-1">
               <v-card-title class="title pa-2">
                 <img v-if="activeActivity == null || activeActivity.id !== id" :src="`/images/icons/${icon}.png`" alt="" width="40" class="mr-3"> 
                 <img v-else :src="`/images/icons/${icon}-active.png`" alt="" width="40" class="mr-3"> 
