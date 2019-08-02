@@ -129,7 +129,7 @@
                             small
                             @click="setRecordForEdit(props.item)"
                           >
-                            edit
+                            editx
                           </v-icon>
                         </v-list-tile-title>
                       </v-list-tile>
@@ -149,18 +149,7 @@
               </tr>
             </template>
             <tr v-if="report.length" class="blue darken-1">
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="text-xs-center white--text">Total dia</td>
-              <td class="text-xs-center white--text">Total noche</td>
-              <td class="text-xs-center white--text">TOTAL</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr v-if="report.length">
-              <td></td>
+              <td>TOTAL</td>
               <td></td>
               <td></td>
               <td class="text-xs-center">{{ getTotals('day') }}</td>
