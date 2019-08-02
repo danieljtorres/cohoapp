@@ -50,6 +50,10 @@
             <td>{{ props.item.id }}</td>
             <td>{{ props.item.name }}</td>
             <td>
+              <label for="icon"><img :src="'/images/icons/' + props.item.icon"></label> 
+              <input type="file" id="icon" ref="actIcon" @change="uploadFile(props.item.id)" style="visibility: hidden;">
+            </td>
+            <td>
               {{ props.item.quest ? 'SI' : 'NO' }}
             </td>
             <td class="text-xs-center">
@@ -75,6 +79,10 @@
 </template>
 
 <script>
+import { axiosInstance } from '@/_plugins/axios.plugin'
+
+const axios = axiosInstance
+
 export default {
   async created() {
     await this.$store.dispatch('activities/getAll')
@@ -91,6 +99,7 @@ export default {
     headersForActivities: [
       { text: '#', value: 'id' },
       { text: 'Nombre', value: 'name', align: 'left' },
+      { text: 'Icono', value: 'icon', align: 'left' },
       { text: 'Pregunta', value: 'quest', align: 'left', sortable: false },
       { text: 'Acciones', align: 'center', sortable: false }
     ]
@@ -124,6 +133,25 @@ export default {
         vue.isAction = false
       }).catch((err) => {
         console.log(err)
+      });
+    },
+    uploadFile(id) {
+      const files = this.$refs.actIcon.files
+
+      console.log(files[0])
+
+      let formData = new FormData();
+      formData.append('icon', files);
+      formData.append('activity_id', id);
+      axios.post('working-activities/icon', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+      }).then(function(){
+        this.$store.dispatch('activities/getAll')
+      })
+      .catch(function(){
+        console.log('FAILURE!!');
       });
     }
   }

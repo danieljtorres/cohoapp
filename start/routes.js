@@ -29,6 +29,7 @@ Route.group(() => {
   Route.get('working-activities', 'WorkingActivityController.index')
   Route.post('working-activities', 'WorkingActivityController.save')
   Route.put('working-activities', 'WorkingActivityController.update')
+  Route.post('working-activities/icon', 'WorkingActivityController.icon')
 
   Route.post('working-record', 'WorkingRecordController.start')
   Route.get('working-record/active', 'WorkingRecordController.active').middleware('auth')

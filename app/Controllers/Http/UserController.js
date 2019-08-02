@@ -54,14 +54,13 @@ class UserController {
     try {
       const user = await User.create({ ...request.except(['role']) })
 
-      console.log(user)
-      /*await Mail.send('emails.new_employee', user.toJSON(), (message) => {
+      await Mail.send('emails.new_employee', user.toJSON(), (message) => {
         console.log(user)
         message
           .to(user.email)
           .from('danieljtorres94@gmail.com')
           .subject(`Mensaje de registro en plataforma ${user.firstname + ' ' + user.lastname}`)
-      })*/
+      })
 
       response.json({
         data: user
