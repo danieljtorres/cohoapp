@@ -9,7 +9,6 @@ class WorkingActivitiesSchema extends Schema {
       table.increments()
       table.string('name', 80).notNullable()
       table.string('icon', 80).unique()
-      table.string('compute', 10).default('1')
       table.integer('quest').default(0)
       table.timestamps()
     })

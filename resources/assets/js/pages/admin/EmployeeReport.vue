@@ -106,16 +106,17 @@
               <tr :key="day.id">
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : ''">{{ day.start | formatDate($moment, 'MM/DD/YYYY') }}</td>
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : ''">{{ day.category.name }}</td>
+                <td colspan="7" v-if="!day.records.length" class="text-xs-center"> N/A </td>
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">
                 <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
-                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end, record.activity.compute) : ''}}</td>
-                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end, record.activity.compute) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end, day.category.compute) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end, day.category.compute) : ''}}</td>
                 <td class="text-xs-center">
-                  <v-chip outline color="secondary">{{ getHours(record.start, record.end, record.activity.compute) }}</v-chip>
+                  <v-chip outline color="secondary">{{ getHours(record.start, record.end, day.category.compute) }}</v-chip>
                 </td>
                 <td></td>
-                <td></td>
+                <td class="text-xs-center">{{ day.retributed_hours }}</td>
                 <td class="text-xs-center">
                   <v-menu offset-y>
                     <template v-slot:activator="{ on }">
@@ -216,7 +217,7 @@ export default {
       { label: 'Semana actual', value: 'week' },
       { label: 'Mes actual', value: 'month' },
       { label: 'Año actual', value: 'year' },
-      { label: 'Perzonalizado', value: 'custom' },
+      { label: 'Perz6+onalizado', value: 'custom' },
     ]
   }),
   computed: {
@@ -285,8 +286,8 @@ export default {
       let total = 0
       for (const day of this.report) {
         for (const record of day.records) {
-          if (type == record.schedule) total += this.getHours(record.start, record.end, record.activity.compute)
-          if (type == null) total += this.getHours(record.start, record.end, record.activity.compute)
+          if (type == record.schedule) total += this.getHours(record.start, record.end, day.category.compute)
+          if (type == null) total += this.getHours(record.start, record.end, day.category.compute)
         }
       }
       return total

@@ -9,7 +9,8 @@ class WorkingDay extends Model {
     super.boot()
 
     this.addHook('beforeCreate', async (instance) => {
-      if (instance.dirty.start) instance.start = moment().unix()
+      console.log(instance.dirty.start)
+      if (!instance.start) instance.start = moment().unix()
     })
   }
 

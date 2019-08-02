@@ -123,6 +123,7 @@ class UserController {
     const { start_filter, end_filter, user_id } = request.all()
     
     try {
+      const user = await User.find(user_id)
       const workingDays = await WorkingDay.query().where(function () {
         this
           .where('start', '>=', start_filter)
@@ -137,8 +138,8 @@ class UserController {
       const wb = new Excel.Workbook();
       const sheet = wb.addWorksheet('Reporte');
 
-      sheet.columns = [
-        { header: 'Fecha', key: 'day' },
+      /*sheet.columns = [
+        { header: 'Fecha', key: 'date' },
         { header: 'Categoria', key: 'category' },
         { header: 'Actividad', key: 'activity' },
         { header: 'Dia', key: 'day' },
@@ -146,33 +147,72 @@ class UserController {
         { header: 'Total Dia + Noche', key: 'total' },
         { header: 'Totsl OF', key: 'total_of' },
         { header: 'Horas compensables', key: 'hc' },
-      ];
+      ];*/
 
-      for (const day of workingDays) {
+      sheet.addRow([
+        user.firstname + ' ' + user.lastname,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        ''
+      ])
+
+      sheet.addRow([])
+
+      sheet.addRow([
+        'Fecha',
+        'Categoria',
+        'Actividad',
+        'Dia',
+        'Noche',
+        'Total Dia + Noche',
+        'Totsl OF',
+        'Horas compensables',
+      ])
+
+      const workingDaysArr = workingDays.toJSON()
+
+      for (const day of workingDaysArr) {
         for (const record of day.records) {
-          sheet.addRow({})
+          sheet.addRow([
+            moment.unix(day.start).format('MM/DD/YYYY'),
+            day.category.name,
+            record.activity.name,
+            record.schedule == 'day' ? this.getHours(record.start, record.end, day.category.compute) : '',
+            record.schedule == 'night' ? this.getHours(record.start, record.end, day.category.compute) : '',
+            this.getHours(record.start, record.end, day.category.compute),
+            '',
+            day.retributed_hours
+          ])
         }
       }
 
-      sheet.addRow({id: 1, name: 'John Doe', dob: new Date(1970,1,1)})
-      sheet.addRow({id: 2, name: 'Jane Doe', dob: new Date(1965,1,7)})
+      sheet.addRow([
+        'TOTAL',
+        '',
+        '',
+        this.getTotals(workingDaysArr,'day'),
+        this.getTotals(workingDaysArr,'night'),
+        this.getTotals(workingDaysArr),
+        '',
+        ''
+      ])
 
       response.implicitEnd = false
 
       response.header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       response.header("Content-Disposition", "attachment; filename=" + fileName);
 
-      wb.xlsx.write(response.response)
-      .then(function(data) {
-        response.send(data)
-      }).catch(err => {
-        console.log(err)
-      });
+      const data = await wb.xlsx.write(response.response)
 
+      response.send(data)
     } catch (error) {
       console.log(error)
       response.status(error.status).json({
-        error: error.message 
+        error: error.message
       })
     }
   }
@@ -184,6 +224,24 @@ class UserController {
     } catch (error) {
       
     }
+  }
+
+  getHours(start, end, compute) {
+    const startMoment = moment.unix(start)
+    const endMoment = moment.unix(end)
+
+    return Math.round((endMoment.diff(startMoment, 'hours', true) * 100) * parseFloat(compute)) / 100
+  }
+
+  getTotals(report, type = null) {
+    let total = 0
+    for (const day of report) {
+      for (const record of day.records) {
+        if (type == record.schedule) total += this.getHours(record.start, record.end, day.category.compute)
+        if (type == null) total += this.getHours(record.start, record.end, day.category.compute)
+      }
+    }
+    return total
   }
 }
 

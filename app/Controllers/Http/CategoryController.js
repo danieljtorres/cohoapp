@@ -25,6 +25,7 @@ class CategoryController {
         data: category
       })
     } catch (error) {
+      console.log(error)
       response.status(error.status).json({
         error: error.message
       })
@@ -34,14 +35,19 @@ class CategoryController {
   async update({ request, response }) {
     const data = request.all()
 
+    if (data.compute) data.compute = parseFloat(data.compute)
+    if (data.compute < 0 && data.compute > 1) delete data.compute
+
     try {
-      const category = await User.find(data.category_id)
-      category.merge(request.except(['category_id']))
+      const category = await Category.find(data.category_id)
+      delete data.category_id
+      category.merge(data)
       await category.save()
       response.json({
-        data: user
+        data: category
       })
     } catch (error) {
+      console.log(error)
       response.status(error.status).json({
         error: error.message
       })

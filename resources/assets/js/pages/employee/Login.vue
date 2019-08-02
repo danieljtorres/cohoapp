@@ -19,7 +19,7 @@
                     <br>
                     <span>Empezar</span>
                     <br>
-                    <v-btn color="warning" @click="step = --step">atras</v-btn>
+                    <!--<v-btn color="warning" @click="step = --step">atras</v-btn>-->
                   </v-flex>
                 </v-layout>
               </fieldset>

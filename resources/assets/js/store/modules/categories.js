@@ -17,6 +17,24 @@ export default {
       } catch (error) {
         return Promise.reject(error)
       }
-    }
+    },
+    async save({ dispatch }, data) {
+      try {
+        await this.$sv.categoryService.save(data)
+        await dispatch('getAll')
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
+    async edit({ dispatch }, data) {
+      try {
+        await this.$sv.categoryService.edit(data)
+        await dispatch('getAll')
+        return true
+      } catch (error) {
+        return Promise.reject(error)
+      }
+    },
   }
 }

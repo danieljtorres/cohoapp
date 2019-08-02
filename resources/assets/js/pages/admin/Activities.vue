@@ -17,9 +17,6 @@
                   <label for="Pregunta">Pregunta</label>
                   <v-switch class="mt-0" style="display: flex;justify-content: center;" v-model="act.quest"></v-switch>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field type="number" v-model="act.compute" label="Computa"></v-text-field>
-                </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -55,9 +52,6 @@
             <td>
               {{ props.item.quest ? 'SI' : 'NO' }}
             </td>
-            <td>
-              {{ props.item.compute }}
-            </td>
             <td class="text-xs-center">
               <v-icon
                 small
@@ -90,8 +84,7 @@ export default {
     act: {
       activity_id: null,
       name: '',
-      quest: '',
-      compute: 1
+      quest: ''
     },
     actForDelete: null,
     search: '',
@@ -99,7 +92,6 @@ export default {
       { text: '#', value: 'id' },
       { text: 'Nombre', value: 'name', align: 'left' },
       { text: 'Pregunta', value: 'quest', align: 'left', sortable: false },
-      { text: 'Computa', value: 'compute', align: 'left', sortable: false },
       { text: 'Acciones', align: 'center', sortable: false }
     ]
   }),
@@ -111,7 +103,6 @@ export default {
       this.act.activity_id = item.id
       this.act.name = item.name
       this.act.quest = item.quest
-      this.act.compute = item.compute
       this.isAction = 'edit'
     },
     setActForDelete(item) {

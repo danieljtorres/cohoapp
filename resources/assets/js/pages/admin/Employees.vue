@@ -79,12 +79,6 @@
               >
                 edit
               </v-icon>
-              <v-icon
-                small
-                @click="setUserForDelete(props.item)"
-              >
-                delete
-              </v-icon>
             </td>
           </template>
         </v-data-table>

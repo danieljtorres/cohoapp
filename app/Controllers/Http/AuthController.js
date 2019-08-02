@@ -35,10 +35,8 @@ class AuthController {
       const user = await User.query().where({ 'username': username, role: 0 }).first()
       
       if (user) {
-        console.log(user)
         if (await Hash.verify(password, user.password)) {
           const workDay = await WorkingDay.create({ user_id: user.id, category_id: category_id })
-
           const token = await auth.withRefreshToken().generate(user, { role: user.role, working_day: workDay })
           
           response.json({
