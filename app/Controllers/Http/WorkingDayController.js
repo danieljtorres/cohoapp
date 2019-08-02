@@ -2,28 +2,27 @@
 
 const WorkingDay = use('App/Models/WorkingDay')
 const WorkingRecord = use('App/Models/WorkingRecord')
+const moment = require('moment')
 
 class WorkingDayController {
   async save({ request, response }) {
-    const { dayData, recordsData } = request.all()
+    let day = request.all()
+
+    console.log(day)
 
     try {
-      day = await WorkingDay.create(dayData)
+      day.start = moment(day.start).unix()
+      day.end = moment(day.end).unix()
 
-      promises = []
+      console.log(day)
 
-      for (const record of recordsData) {
-        promises.push(WorkingRecord.create({ working_day_id: day.id,...record }))
-      }
-      
-      const records = await Promise.all(promises)
-
-      day.records = records
+      day = await WorkingDay.create(day)
 
       response.json({
         data: day
       })
-    } catch (error) {
+    } catch(error) {
+      console.log(error)
       response.status(error.status).json({
         error: error.message
       })
