@@ -82,8 +82,10 @@
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 1" class="td-hover" @click="openDayRecordDialog(day.id)">
                   {{ day.start | formatDate($moment, 'MM/DD/YYYY') }}
                 </td>
-                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 1">{{ day.category.name }}</td>
-                <td colspan="7" v-if="!day.records.length" class="text-xs-center"> N/A </td>
+                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2">{{ day.category.name }}</td>
+              </tr>
+              <tr v-if="!day.records.length">
+                <td colspan="7" class="text-xs-center"> N/A </td>
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">
                 <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
