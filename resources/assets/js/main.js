@@ -13,6 +13,8 @@ import { axiosInstance } from '@/_plugins/axios.plugin'
 import { Router } from '@/routes'
 import { store } from '@/store'
 import App from './App'
+import DateTimePicker from 'vuetify-datetime-picker'
+import 'vuetify-datetime-picker/src/stylus/main.styl'
 
 Vue.config.productionTip = false
 
@@ -44,6 +46,8 @@ Vue.use(VueAxios, axiosInstance)
 Vue.use(Vuetify)
 
 Vue.use(VeeValidate);
+Vue.use(DateTimePicker)
+
 Validator.localize('es', es);
 
 moment.locale('es')

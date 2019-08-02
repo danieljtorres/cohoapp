@@ -33,6 +33,10 @@ Route.group(() => {
   Route.post('working-record', 'WorkingRecordController.start')
   Route.get('working-record/active', 'WorkingRecordController.active').middleware('auth')
   Route.post('working-record/end', 'WorkingRecordController.end').middleware('auth')
+  Route.post('working-record/save', 'WorkingRecordController.save').middleware('auth')
+  Route.delete('working-record/delete/:record_id', 'WorkingRecordController.delete').middleware('auth')
+
+  Route.post('working-day/save', 'WorkingDayController.save').middleware('auth')
 
   Route.get('users/admins', 'UserController.getAdmins').middleware('auth')
   Route.get('users/employees', 'UserController.getEmployees').middleware('auth')

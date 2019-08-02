@@ -106,8 +106,6 @@ class UserController {
         builder.with('activity')
       }).with('category').fetch()
 
-      console.log(workingDays)
-
       response.json({
         data: workingDays.toJSON()
       })

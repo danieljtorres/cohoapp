@@ -82,6 +82,36 @@ class WorkingRecordController {
     }
   }
 
+  async save({ request, response }) {
+    const record = request.all()
+
+    record.start = moment(record.start).unix()
+    record.end = moment(record.end).unix()
+
+    try {
+      let recordToSave
+
+      if (record.id) {
+        recordToSave = await WorkingRecord.find(record.id)
+        delete record.id
+
+        recordToSave.merge(record)
+        await recordToSave.save()
+      }
+      else {
+        recordToSave = await WorkingRecord.create(record)
+      }
+
+      response.json({
+        data: recordToSave
+      })
+    } catch (error) {
+      response.status(error.status).json({
+        error: error.message
+      })
+    }
+  }
+
   async update({ request, response }) {
     const { record_id } = request.all()
 
@@ -101,8 +131,8 @@ class WorkingRecordController {
     }
   }
 
-  async delete({ request, response }) {
-    const { record_id } = request.all()
+  async delete({ response, params }) {
+    const { record_id } = params
 
     try {
       const record = await WorkingRecord.find(record_id)
