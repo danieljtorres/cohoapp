@@ -23,7 +23,7 @@
                   <v-select :items="categories" @input="setCategory" :value="newRecord.category_id" item-text="name" item-value="id" label="Categoria laboral" name="category" data-vv-name="category"></v-select>
                 </v-flex>
                 <v-flex xs12 sm4 md4>
-                  <v-text-field v-model="newRecord.retributed_hours" type="number" label="Number" min="1"></v-text-field>
+                  <v-text-field v-model="newRecord.retributed_hours" type="number" label="Hrs retribuidas" min="1"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
