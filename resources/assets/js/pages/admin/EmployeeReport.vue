@@ -89,12 +89,12 @@
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">
                 <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
-                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end, day.category.compute) : ''}}</td>
-                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end, day.category.compute) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end) : ''}}</td>
                 <td class="text-xs-center">
-                  <v-chip outline color="secondary">{{ getHours(record.start, record.end, day.category.compute) }}</v-chip>
+                  <v-chip outline color="secondary">{{ getHours(record.start, record.end) }}</v-chip>
                 </td>
-                <td></td>
+                <td> {{ getHours(record.start, record.end, day.category.name, record.activity.name) }} </td>
                 <td class="text-xs-center">{{ day.retributed_hours }}</td>
                 <td class="text-xs-center">
                   <v-menu offset-y>
@@ -134,8 +134,8 @@
               <td class="text-xs-center">{{ getTotals('day') }}</td>
               <td class="text-xs-center">{{ getTotals('night') }}</td>
               <td class="text-xs-center">{{ getTotals() }}</td>
-              <td></td>
-              <td></td>
+              <td class="text-xs-center">{{ getTotals('compute') }}</td>
+              <td class="text-xs-center">{{ getTotals('retributed') }}</td>
               <td></td>
             </tr>
           </tbody>
@@ -337,18 +337,30 @@ export default {
     saveToExcel() {
       this.$store.dispatch('users/getEmployeeReportToExcel', this.params)
     },
-    getHours(start, end, compute) {
+    getHours(start, end, category = null, activity = null) {
       const startMoment = this.$moment.unix(start)
       const endMoment = this.$moment.unix(end)
 
-      return Math.round((endMoment.diff(startMoment, 'hours', true) * 100) * parseFloat(compute)) / 100
+      let total = endMoment.diff(startMoment, 'hours', true) * 100
+
+      if (compute) {
+        if (category && activity) {
+          if(category != 'Chofer' && activity == 'Conducción') total = 0
+        }
+      }
+
+      return total
     },
     getTotals(type = null) {
       let total = 0
       for (const day of this.report) {
+        if (type == 'retributed') total += day.retributed_hours
         for (const record of day.records) {
-          if (type == record.schedule) total += this.getHours(record.start, record.end, day.category.compute)
-          if (type == null) total += this.getHours(record.start, record.end, day.category.compute)
+          if (type == record.schedule) total += this.getHours(record.start, record.end)
+          if (type == 'compute') {
+            total += this.getHours(record.start, record.end, day.category.name, record.activity.name)
+          }
+          if (type == null) total += this.getHours(record.start, record.end)
         }
       }
       return total
