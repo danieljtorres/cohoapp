@@ -94,7 +94,7 @@
                 <td class="text-xs-center">
                   <v-chip outline color="secondary">{{ getHours(record.start, record.end) }}</v-chip>
                 </td>
-                <td> {{ getHours(record.start, record.end, day.category.name, record.activity.name) }} </td>
+                <td class="text-xs-center"> {{ getHours(record.start, record.end, day.category.name, record.activity.name) }} </td>
                 <td class="text-xs-center">{{ day.retributed_hours }}</td>
                 <td class="text-xs-center">
                   <v-menu offset-y>
