@@ -154,16 +154,11 @@ class UserController {
       const wb = new Excel.Workbook();
       const sheet = wb.addWorksheet('Reporte');
 
-      /*sheet.columns = [
-        { header: 'Fecha', key: 'date' },
-        { header: 'Categoria', key: 'category' },
-        { header: 'Actividad', key: 'activity' },
-        { header: 'Dia', key: 'day' },
-        { header: 'Noche', key: 'night' },
-        { header: 'Total Dia + Noche', key: 'total' },
-        { header: 'Totsl OF', key: 'total_of' },
-        { header: 'Horas compensables', key: 'hc' },
-      ];*/
+      for (let index = 1; index < 9; index++) {
+        let column = sheet.getColumn(index)
+        column.width = 15
+        column.font = { name: 'Arial', size: 10 }
+      }
 
       sheet.addRow([
         user.firstname + ' ' + user.lastname,
@@ -184,12 +179,14 @@ class UserController {
         'Actividad',
         'Dia',
         'Noche',
-        'Total Dia + Noche',
+        'Total',
         'Totsl OF',
-        'Horas compensables',
+        'Hrs compensables',
       ])
 
       const workingDaysArr = workingDays.toJSON()
+
+      const roundTo = this.roundTo
 
       for (const day of workingDaysArr) {
         for (const record of day.records) {
@@ -197,10 +194,10 @@ class UserController {
             moment.unix(day.start).format('MM/DD/YYYY'),
             day.category.name,
             record.activity.name,
-            record.schedule == 'day' ? this.getHours(record.start, record.end, day.category.compute) : '',
-            record.schedule == 'night' ? this.getHours(record.start, record.end, day.category.compute) : '',
-            this.getHours(record.start, record.end, day.category.compute),
-            '',
+            record.schedule == 'day' ? roundTo(this.getHours(record.start, record.end), 2) : '',
+            record.schedule == 'night' ? roundTo(this.getHours(record.start, record.end), 2) : '',
+            roundTo(this.getHours(record.start, record.end, day.category.compute), 2),
+            roundTo(this.getHours(record.start, record.end, day.category.id, record.activity.id), 2),
             day.retributed_hours
           ])
         }
@@ -210,11 +207,11 @@ class UserController {
         'TOTAL',
         '',
         '',
-        this.getTotals(workingDaysArr,'day'),
-        this.getTotals(workingDaysArr,'night'),
-        this.getTotals(workingDaysArr),
-        '',
-        ''
+        roundTo(this.getTotals(workingDaysArr,'day'), 2),
+        roundTo(this.getTotals(workingDaysArr,'night'), 2),
+        roundTo(this.getTotals(workingDaysArr), 2),
+        roundTo(this.getTotals(workingDaysArr, 'compute'), 2),
+        roundTo(this.getTotals(workingDaysArr, 'retributed'), 2)
       ])
 
       response.implicitEnd = false
@@ -224,7 +221,7 @@ class UserController {
 
       const data = await wb.xlsx.write(response.response)
 
-      response.send(data)
+      await response.send(data)
     } catch (error) {
       console.log(error)
       response.status(error.status).json({
@@ -233,22 +230,43 @@ class UserController {
     }
   }
 
-  getHours(start, end, compute) {
+  getHours(start, end, category = null, activity = null) {
     const startMoment = moment.unix(start)
     const endMoment = moment.unix(end)
 
-    return Math.round((endMoment.diff(startMoment, 'hours', true) * 100) * parseFloat(compute)) / 100
+    let total = endMoment.diff(startMoment, 'hours', true)
+
+    if (category && activity) {
+      if (category != 3/*Chofer*/ && activity == 1/*Conduccion*/) total = 0
+      if (activity == 5/*Interrupcion*/) total = total * 0.70
+    }
+
+    return total
   }
 
   getTotals(report, type = null) {
     let total = 0
     for (const day of report) {
+      if (type == 'retributed') total += day.retributed_hours
       for (const record of day.records) {
-        if (type == record.schedule) total += this.getHours(record.start, record.end, day.category.compute)
-        if (type == null) total += this.getHours(record.start, record.end, day.category.compute)
+        if (type == record.schedule) total += this.getHours(record.start, record.end)
+        if (type == 'compute') {
+          total += this.getHours(record.start, record.end, day.category.id, record.activity.id)
+        }
+        if (type == null) total += this.getHours(record.start, record.end)
       }
     }
     return total
+  }
+
+  roundTo(n, digits) {
+    if (digits === undefined) {
+        digits = 0;
+    }
+
+    var multiplicator = Math.pow(10, digits);
+    n = parseFloat((n * multiplicator).toFixed(11));
+    return Math.round(n) / multiplicator;
   }
 }
 

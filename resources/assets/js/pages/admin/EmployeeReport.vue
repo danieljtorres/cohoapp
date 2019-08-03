@@ -85,16 +85,16 @@
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2">{{ day.category.name }}</td>
               </tr>
               <tr v-if="!day.records.length" :key="day.id+'na'">
-                <td colspan="7" class="text-xs-center"> N/A </td>
+                <td colspan="7" class="text-xs-center" style="border-left: 1px solid rgba(0,0,0,.12);"> No realizo actividades </td>
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">
                 <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
-                <td class="text-xs-center">{{record.schedule == 'day' ? getHours(record.start, record.end) : ''}}</td>
-                <td class="text-xs-center">{{record.schedule == 'night' ? getHours(record.start, record.end) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'day' ? roundTo(getHours(record.start, record.end)) : ''}}</td>
+                <td class="text-xs-center">{{record.schedule == 'night' ? roundTo(getHours(record.start, record.end)) : ''}}</td>
                 <td class="text-xs-center">
-                  <v-chip outline color="secondary">{{ getHours(record.start, record.end) }}</v-chip>
+                  <v-chip outline color="secondary">{{ roundTo(getHours(record.start, record.end)) }}</v-chip>
                 </td>
-                <td class="text-xs-center"> {{ getHours(record.start, record.end, day.category.name, record.activity.name) }} </td>
+                <td class="text-xs-center"> {{ roundTo(getHours(record.start, record.end, day.category.id, record.activity.id)) }} </td>
                 <td class="text-xs-center">{{ day.retributed_hours }}</td>
                 <td class="text-xs-center">
                   <v-menu offset-y>
@@ -127,15 +127,15 @@
                 </td>
               </tr>
             </template>
-            <tr v-if="report.length" class="blue darken-1">
-              <td>TOTAL</td>
+            <tr v-if="report.length" class="blue darken-1 white-">
+              <td class="white--text">TOTAL</td>
               <td></td>
               <td></td>
-              <td class="text-xs-center">{{ getTotals('day') }}</td>
-              <td class="text-xs-center">{{ getTotals('night') }}</td>
-              <td class="text-xs-center">{{ getTotals() }}</td>
-              <td class="text-xs-center">{{ getTotals('compute') }}</td>
-              <td class="text-xs-center">{{ getTotals('retributed') }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('day')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('night')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals()) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('compute')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('retributed')) }}</td>
               <td></td>
             </tr>
           </tbody>
@@ -344,10 +344,11 @@ export default {
       let total = endMoment.diff(startMoment, 'hours', true)
 
       if (category && activity) {
-        if(category != 'Chofer' && activity == 'Conducción') total = 0
+        if(category != 3/*Chofer*/ && activity == 1/*Conduccion*/) total = 0
+        if(activity == 5/*Interrupcion*/) total = total * 0.70
       }
 
-      return Math.round(total)
+      return total
     },
     getTotals(type = null) {
       let total = 0
@@ -356,7 +357,7 @@ export default {
         for (const record of day.records) {
           if (type == record.schedule) total += this.getHours(record.start, record.end)
           if (type == 'compute') {
-            total += this.getHours(record.start, record.end, day.category.name, record.activity.name)
+            total += this.getHours(record.start, record.end, day.category.id, record.activity.id)
           }
           if (type == null) total += this.getHours(record.start, record.end)
         }
@@ -407,6 +408,11 @@ export default {
 
           this.dateTimeDialog = !this.dateTimeDialog
         })
+    },
+    roundTo(n) {
+      var multiplicator = Math.pow(10, 2);
+      n = parseFloat((n * multiplicator).toFixed(11));
+      return Math.round(n) / multiplicator;
     }
   },
   filters: {
