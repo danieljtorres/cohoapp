@@ -56,7 +56,7 @@ export default {
           .then(res => {
             this.$router.push('/')
           }, error => {
-            alert('Datos incorrectos por favor verifique!')
+            alert('Datos incorrectos')
             console.log(error)
           })
       }
