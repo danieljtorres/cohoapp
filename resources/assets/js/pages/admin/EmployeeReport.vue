@@ -347,7 +347,7 @@ export default {
         if(category != 'Chofer' && activity == 'Conducción') total = 0
       }
 
-      return total
+      return Math.round(total)
     },
     getTotals(type = null) {
       let total = 0
