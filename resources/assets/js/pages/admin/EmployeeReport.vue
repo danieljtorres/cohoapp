@@ -341,7 +341,7 @@ export default {
       const startMoment = this.$moment.unix(start)
       const endMoment = this.$moment.unix(end)
 
-      let total = endMoment.diff(startMoment, 'hours', true) * 100
+      let total = endMoment.diff(startMoment, 'hours', true)
 
       if (category && activity) {
         if(category != 'Chofer' && activity == 'Conducción') total = 0
