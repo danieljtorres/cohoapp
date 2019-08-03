@@ -42,6 +42,7 @@ export default {
     }, 500)
   },
   data: () => ({
+    date: '',
     timer: null,
     username: '',
     password: ''

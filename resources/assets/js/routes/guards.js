@@ -4,12 +4,18 @@ import authService from "@/_services/auth.service";
 export default {
   isAdmin(to, from, next) {
     const tokenData = authService.getDecodedToken()
-    if (tokenData.data.role < 1) return next('/')
+    if (tokenData.data.role < 1) {
+      authService.logout()
+      return next('/admin/login')
+    }
     next()
   },
   isEmployee(to, from, next) {
     const tokenData = authService.getDecodedToken()
-    if (tokenData.data.role > 0) return next('/admin')
+    if (tokenData.data.role > 0) {
+      authService.logout()
+      return next('/login')
+    }
     next()
   },
   isWorking(to, from, next) {
