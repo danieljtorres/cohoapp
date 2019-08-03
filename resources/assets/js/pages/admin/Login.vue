@@ -43,7 +43,8 @@ export default {
             .then(res => {
               this.$router.push('/admin')
             }, err => {
-              console.log(err)
+              alert('Datos incorrectos')
+              console.log(error)
             }) 
         }
       } catch (error) {
