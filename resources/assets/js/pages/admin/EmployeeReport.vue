@@ -343,10 +343,8 @@ export default {
 
       let total = endMoment.diff(startMoment, 'hours', true) * 100
 
-      if (compute) {
-        if (category && activity) {
-          if(category != 'Chofer' && activity == 'Conducción') total = 0
-        }
+      if (category && activity) {
+        if(category != 'Chofer' && activity == 'Conducción') total = 0
       }
 
       return total
