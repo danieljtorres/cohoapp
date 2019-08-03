@@ -84,7 +84,7 @@
                 </td>
                 <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2">{{ day.category.name }}</td>
               </tr>
-              <tr v-if="!day.records.length">
+              <tr v-if="!day.records.length" :key="day.id+'na'">
                 <td colspan="7" class="text-xs-center"> N/A </td>
               </tr>
               <tr v-for="record in day.records" :key="record.id+'r'">

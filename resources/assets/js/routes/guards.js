@@ -12,6 +12,16 @@ export default {
     if (tokenData.data.role > 0) return next('/admin')
     next()
   },
+  isWorking(to, from, next) {
+    const w = authService.getWork()
+    if (w) return next('/work')
+    next()
+  },
+  isNoWorking(to, from, next) {
+    const w = authService.getWork()
+    if (!w) return next('/')
+    next()
+  },
   isLoggedIn(to, from, next) {
     const isAuthenticaded = authService.isAuthenticaded()
     const toAdminUrl = to.path.split('/')

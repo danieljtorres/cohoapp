@@ -24,8 +24,8 @@ export default {
     },
     async getActive({ commit }) {
       try {
-        const tokenData = this.$sv.authService.getDecodedToken()
-        const active = await this.$sv.activityService.getActive({ working_day_id: tokenData.data.working_day.id })
+        const tokenData = this.$sv.authService.getWork()
+        const active = await this.$sv.activityService.getActive({ working_day_id: tokenData.id })
         commit('SET_ACTIVE', active)
         return true
       } catch (error) {
@@ -34,8 +34,8 @@ export default {
     },
     async start({ commit }, data) {
       try {
-        const tokenData = this.$sv.authService.getDecodedToken()
-        data.working_day_id = tokenData.data.working_day.id
+        const tokenData = this.$sv.authService.getWork()
+        data.working_day_id = tokenData.id
         const record = await this.$sv.activityService.start(data)
         commit('SET_ACTIVE', record)
         return true
@@ -45,8 +45,8 @@ export default {
     },
     async end({ commit }, data) {
       try {
-        const tokenData = this.$sv.authService.getDecodedToken()
-        data.working_day_id = tokenData.data.working_day.id
+        const tokenData = this.$sv.authService.getWork()
+        data.working_day_id = tokenData.id
         const record = await this.$sv.activityService.end(data)
         commit('SET_ACTIVE', null)
         return true

@@ -36,6 +36,23 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-dialog :value="userForDel" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Eliminar empleado</span>
+          </v-card-title>
+
+          <v-card-text>
+            Seguro quiere eliminar el usuario
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="userForDel = null">Cancelar</v-btn>
+            <v-btn color="blue darken-1" flat @click="doDelete">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-card>
         <v-card-title>
           <v-btn color="primary" dark class="mb-2" @click="isAction = 'save'">Nuevo empleado</v-btn>
@@ -79,6 +96,13 @@
               >
                 edit
               </v-icon>
+              <v-icon
+                small
+                class="mr-2"
+                @click="setUserForDel(props.item)"
+              >
+                delete
+              </v-icon>
             </td>
           </template>
         </v-data-table>
@@ -88,6 +112,10 @@
 </template>
 
 <script>
+import { axiosInstance } from '@/_plugins/axios.plugin'
+
+const axios = axiosInstance
+
 export default {
   async created() {
     await this.$store.dispatch('users/getEmployees')
@@ -102,7 +130,7 @@ export default {
       lastname: '',
       password: ''
     },
-    userForDelete: null,
+    userForDel: null,
     search: '',
     headersForEmployees: [
       { text: '#', value: 'id', align: 'center' },
@@ -125,8 +153,8 @@ export default {
       this.user.lastname = item.lastname
       this.isAction = 'edit'
     },
-    setUserForDelete(item) {
-      this.userForDelete = item.id
+    setUserForDel(item) {
+      this.userForDel = item.id
     },
     doAction() {
       const vue = this
@@ -145,6 +173,12 @@ export default {
       }).catch((err) => {
         console.log(err)
       });
+    },
+    doDelete() {
+      axios.delete('users/'+this.userForDel).then(() => {
+        this.userForDel = null
+        this.$store.dispatch('users/getEmployees')
+      })
     }
   }
 }

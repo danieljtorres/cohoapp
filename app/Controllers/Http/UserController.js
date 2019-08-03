@@ -10,7 +10,7 @@ const moment = require('moment')
 class UserController {
   async getAdmins({ response }) {
     try {
-      const admins = await User.query().where('role', 2).fetch()
+      const admins = await User.query().where({ role: 1, del: 0 }).orWhere({ role: 2, del: 0 }).fetch()
 
       response.json({
         data: admins
@@ -24,7 +24,7 @@ class UserController {
 
   async getEmployees({ response }) {
     try {
-      const employees = await User.query().where('role', 0).fetch()
+      const employees = await User.query().where({ role: 0, del: 0 }).fetch()
 
       response.json({
         data: employees
@@ -54,11 +54,11 @@ class UserController {
     try {
       const user = await User.create({ ...request.except(['role']) })
 
-      await Mail.send('emails.new_employee', user.toJSON(), (message) => {
+      await Mail.send('emails.new_employee', { ...request.except(['role']) }, (message) => {
         console.log(user)
         message
           .to(user.email)
-          .from('danieljtorres94@gmail.com')
+          .from('no-responder@grupotriton.idnapps.com')
           .subject(`Mensaje de registro en plataforma ${user.firstname + ' ' + user.lastname}`)
       })
 
@@ -81,6 +81,25 @@ class UserController {
     try {
       const user = await User.find(data.user_id)
       user.merge(request.except(['role', 'user_id']))
+      await user.save()
+      response.json({
+        data: user
+      })
+    } catch (error) {
+      response.status(error.status).json({
+        error: error.message
+      })
+    }
+  }
+
+  async delete({ request, params, response }) {
+    const { user_id } = params
+
+    try {
+      const user = await User.find(user_id)
+      if (!user.role == 0) {
+        user.del = 1
+      }
       await user.save()
       response.json({
         data: user
@@ -211,15 +230,6 @@ class UserController {
       response.status(error.status).json({
         error: error.message
       })
-    }
-  }
-
-  async delete({ request, response }) {
-    const { user_id } = request.all()
-    try {
-      const user = await User.find(user_id)
-    } catch (error) {
-      
     }
   }
 

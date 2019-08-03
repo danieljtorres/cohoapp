@@ -38,9 +38,9 @@ export default {
     },
     async logoutEmployee() {
       try {
-        const tokenData = this.$sv.authService.getDecodedToken()
-        await this.$sv.authService.logoutEmployee({ working_day_id: tokenData.data.working_day.id })
-        this.$sv.authService.logout()
+        const w = this.$sv.authService.getWork()
+        await this.$sv.authService.logoutEmployee({ working_day_id: w.id })
+        this.$sv.authService.stopWork()
         return true
       } catch (error) {
         return Promise.reject(error)

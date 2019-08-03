@@ -20,8 +20,12 @@ export const Router = new VueRouter({
     beforeEnter: guards.isLoggedIn
   }, {
     path: '/',
+    component: pages.employee.Select,
+    beforeEnter: guards.isWorking,
+  }, {
+    path: '/work',
     component: Layout,
-    beforeEnter: guards.isEmployee,
+    beforeEnter: guards.isNoWorking,
     children: [{
       path: '/',
       component: pages.employee.Index

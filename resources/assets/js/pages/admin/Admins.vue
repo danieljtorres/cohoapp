@@ -36,6 +36,23 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+      <v-dialog :value="userForDel" max-width="500px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Eliminar admin</span>
+          </v-card-title>
+
+          <v-card-text>
+            Seguro quiere eliminar el usuario
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="userForDel = null">Cancelar</v-btn>
+            <v-btn color="blue darken-1" flat @click="doDelete">OK</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-card>
         <v-card-title>
           <v-btn color="primary" dark class="mb-2" @click="isAction = 'save'">Nuevo administrador</v-btn>
@@ -64,16 +81,16 @@
             <td>{{ props.item.firstname + ' ' + props.item.lastname }}</td>
             <td>{{ props.item.created_at }}</td>
             <td class="text-xs-center">
-              <v-icon
+              <v-icon v-if="authUser.role == 1 || props.item.role > 1"
                 small
                 class="mr-2"
                 @click="setUserForEdit(props.item)"
               >
                 edit
               </v-icon>
-              <v-icon
+              <v-icon v-if="authUser.role == 1 || props.item.role > 1"
                 small
-                @click="setUserForDelete(props.item)"
+                @click="setUserForDel(props.item)"
               >
                 delete
               </v-icon>
@@ -86,6 +103,10 @@
 </template>
 
 <script>
+import { axiosInstance } from '@/_plugins/axios.plugin'
+
+const axios = axiosInstance
+
 export default {
   async created() {
     await this.$store.dispatch('users/getAdmins')
@@ -101,7 +122,7 @@ export default {
       password: ''
     },
     userForEdit: null,
-    userForDelete: null,
+    userForDel: null,
     search: '',
     headersForAdmins: [
       { text: '#', value: 'id', align: 'center' },
@@ -113,14 +134,15 @@ export default {
     ]
   }),
   computed: {
-    admins() { return this.$store.state.users.admins }
+    admins() { return this.$store.state.users.admins },
+    authUser() { return this.$store.state.auth.authUser }
   },
   methods: {
     setUserForEdit(item) {
       this.userForEdit = item
     },
-    setUserForDelete(item) {
-      this.userForDelete = item
+    setUserForDel(item) {
+      this.userForDel = item.id
     },
     doAction() {
       const vue = this
@@ -139,6 +161,12 @@ export default {
       }).catch((err) => {
         console.log(err)
       });
+    },
+    doDelete() {
+      axios.delete('users/'+this.userForDel).then(() => {
+        this.userForDel = null
+        this.$store.dispatch('users/getAdmins')
+      })
     }
   }
 }

@@ -19,6 +19,8 @@ const Route = use('Route')
 Route.group(() => {
   Route.post('admin/login', 'AuthController.adminLogin')
   Route.post('login', 'AuthController.login')
+  Route.post('start-work', 'AuthController.startWork').middleware('auth')
+  Route.post('stop-work', 'AuthController.stopWork')
 
   Route.post('logout', 'AuthController.logout')
 
@@ -42,8 +44,9 @@ Route.group(() => {
   Route.get('users/admins', 'UserController.getAdmins').middleware('auth')
   Route.get('users/employees', 'UserController.getEmployees').middleware('auth')
   Route.post('users/employees', 'UserController.saveEmployee').middleware('auth')
+  Route.post('users/admins', 'UserController.saveAdmin').middleware('auth')
   Route.put('users', 'UserController.update').middleware('auth')
-  Route.delete('users', 'UserController.delete').middleware('auth')
+  Route.delete('users/:user_id', 'UserController.delete').middleware('auth')
 
   Route.get('users/employees/report', 'UserController.getEmployeesReport').middleware('auth')
   Route.get('users/employees/report/excel', 'UserController.getEmployeesReportToExcel')//.middleware('auth')

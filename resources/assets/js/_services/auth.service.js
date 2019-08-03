@@ -55,6 +55,18 @@ export default {
 
     return false
   },
+  getWork() {
+    const a = JSON.parse(localStorage.getItem('coho_work'))
+    if (a) {
+      return a
+    }
+
+    return false
+  },
+  stopWork() {
+    localStorage.removeItem('coho_work')
+    return true
+  },
   isAuthenticaded() {
     const tokenData = this.getDecodedToken()
     const now = moment().unix()
@@ -71,7 +83,7 @@ export default {
     return true
   },
   logoutEmployee(data) {
-    return http.post('logout', data)
+    return http.post('stop-work', data)
       .then(response => {
         return response.data
       })

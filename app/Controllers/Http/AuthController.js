@@ -30,21 +30,42 @@ class AuthController {
   }
 
   async login({ request, auth, response }) {
-    const { username, password, category_id } = request.all()
+    const { username, password } = request.all()
     try {
       const user = await User.query().where({ 'username': username, role: 0 }).first()
       
       if (user) {
         if (await Hash.verify(password, user.password)) {
-          const workDay = await WorkingDay.create({ user_id: user.id, category_id: category_id })
-          const token = await auth.withRefreshToken().generate(user, { role: user.role, working_day: workDay })
+          const token = await auth.withRefreshToken().generate(user, { role: user.role })
           
-          response.json({
+          return response.json({
             token: token,
-            user: user,
-            work_day: workDay
+            user: user
           })
         }
+      }
+
+      response.status(401).json({
+        error: 'Datos incorrectos'
+      })
+    } catch (error) {
+      response.status(error.status).json({
+        error: error.message
+      })
+    }
+  }  
+
+  async startWork({ request, auth, response }) {
+    const { category_id } = request.all()
+    try {
+      const user = await auth.getUser()
+      
+      if (user) {
+        const workDay = await WorkingDay.create({ user_id: user.id, category_id: category_id })
+          
+        return response.json({
+          data: workDay
+        })
       }
     } catch (error) {
       response.status(error.status).json({
@@ -53,7 +74,7 @@ class AuthController {
     }
   }  
 
-  async logout({ request, response }) {
+  async stopWork({ request, response }) {
     const { working_day_id } = request.all()
     try {
 

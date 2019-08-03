@@ -19,7 +19,7 @@
         <v-card v-if="activityForStart">
 
           <v-card-text>
-            ¿Estás seguro de querer comenzar la jornada?
+            ¿Estás seguro de comenzar la actividad?
           </v-card-text>
 
           <v-card-actions>

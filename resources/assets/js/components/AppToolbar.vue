@@ -69,7 +69,7 @@ export default {
       } else {
         this.$store.dispatch('auth/logoutEmployee').then((result) => {
           if (result) {
-            this.$router.push('/login')
+            this.$router.push('/')
             this.$store.commit('activities/SET_ACTIVE', null)
           }
         })
