@@ -28,6 +28,44 @@
     </v-content>
     <v-toolbar app clipped-left fixed height="58" class="header-app white--text elevation-1">
       <v-toolbar-title>Iniciar jornada</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-menu offset-y v-if="!authUser.role">
+        <template v-slot:activator="{ on }">
+          <div class="avatar-toggle px-2" v-on="on">
+            {{ authUser.username }}
+            <v-avatar size="40">
+              <v-icon dark>account_circle</v-icon>
+            </v-avatar>
+          </div>
+        </template>
+        <v-list class="py-0">
+          <v-list-tile @click.stop="isLogout = true">
+            <v-list-tile-title @>Salir</v-list-tile-title>
+          </v-list-tile>
+        </v-list>
+      </v-menu>
+      <v-dialog v-model="isLogout" max-width="290">
+        <v-card>
+          <v-card-title class="headline">Salir</v-card-title>
+
+          <v-card-text>
+            ¿Estás seguro que salir?
+          </v-card-text>
+          
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+
+            <v-btn color="green darken-1" flat="flat" @click="isLogout = false">
+              Cancelar
+            </v-btn>
+
+            <v-btn color="green darken-1" flat="flat" @click="logout">
+              Ok
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </v-toolbar>
   </v-app>
 </template>
@@ -46,10 +84,12 @@ export default {
     }
   },
   data: () => ({
+    isLogout: false,
     category_id: null,
   }),
   computed: {
-    categories() { return this.$store.state.categories.list }
+    categories() { return this.$store.state.categories.list },
+    authUser() { return this.$store.state.auth.authUser }
   },
   methods: {
     setCategory(val) {
@@ -66,6 +106,11 @@ export default {
             alert('Datos incorrectos por favor verifique!')
             console.log(error)
           })
+    },
+    logout() {
+      this.$store.dispatch('auth/logout').then((result) => {
+        this.$router.push('/login')
+      })
     }
   },
   destroyed() {

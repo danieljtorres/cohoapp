@@ -63,8 +63,10 @@ new Vue({
   beforeCreate() {
     const tokenData = store.$sv.authService.getDecodedToken()
     const authUser = store.$sv.authService.getAuthUser()
+    const wd = store.$sv.authService.getWork()
     store.commit('auth/SET_TOKEN_DATA', tokenData)
     store.commit('auth/SET_AUTH_USER', authUser)
+    store.commit('auth/SET_WORK', wd)
   },
   render: h => h(App)
 })

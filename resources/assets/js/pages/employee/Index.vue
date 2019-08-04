@@ -87,8 +87,16 @@ export default {
     activityForStart: null
   }),
   computed: {
-    activities() { return this.$store.state.activities.list },
-    activeActivity() { return this.$store.state.activities.active }
+    activities() {
+      let acts = this.$store.state.activities.list
+      return acts
+      /*if(this.wd.id ==  || this.wd.id ==  ) {
+
+      }*/
+    },
+    activeActivity() { return this.$store.state.activities.active },
+    wd() { return this.$store.state.workingDay }
+    
   },
   methods: {
     setActivityForStart(data) {

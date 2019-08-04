@@ -2,6 +2,7 @@ export default {
   namespaced: true,
   state: {
     authUser: false,
+    workingDay: false,
     tokenData: false
   },
   mutations: {
@@ -10,6 +11,9 @@ export default {
     },
     SET_AUTH_USER(state, playload) {
       state.authUser = playload
+    },
+    SET_WORK(state, playload) {
+      state.workingDay = playload
     }
   },
   actions: {
@@ -35,6 +39,9 @@ export default {
     },
     async logoutAdmin() {
       this.$sv.authService.logout()
+    },
+    async logout() {
+      return this.$sv.authService.logout()
     },
     async logoutEmployee() {
       try {

@@ -6388,10 +6388,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   computed: {
     activities: function activities() {
-      return this.$store.state.activities.list;
+      var acts = this.$store.state.activities.list;
+      return acts;
+      /*if(this.wd.id ==  || this.wd.id ==  ) {
+       }*/
     },
     activeActivity: function activeActivity() {
       return this.$store.state.activities.active;
+    },
+    wd: function wd() {
+      return this.$store.state.workingDay;
     }
   },
   methods: {
@@ -6658,6 +6664,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -6693,12 +6737,16 @@ var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
   }(),
   data: function data() {
     return {
+      isLogout: false,
       category_id: null
     };
   },
   computed: {
     categories: function categories() {
       return this.$store.state.categories.list;
+    },
+    authUser: function authUser() {
+      return this.$store.state.auth.authUser;
     }
   },
   methods: {
@@ -6742,7 +6790,14 @@ var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
       }
 
       return handleLoginSubmit;
-    }()
+    }(),
+    logout: function logout() {
+      var _this2 = this;
+
+      this.$store.dispatch('auth/logout').then(function (result) {
+        _this2.$router.push('/login');
+      });
+    }
   },
   destroyed: function destroyed() {
     clearInterval(this.timer);
@@ -64528,7 +64583,147 @@ var render = function() {
           staticClass: "header-app white--text elevation-1",
           attrs: { app: "", "clipped-left": "", fixed: "", height: "58" }
         },
-        [_c("v-toolbar-title", [_vm._v("Iniciar jornada")])],
+        [
+          _c("v-toolbar-title", [_vm._v("Iniciar jornada")]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          !_vm.authUser.role
+            ? _c(
+                "v-menu",
+                {
+                  attrs: { "offset-y": "" },
+                  scopedSlots: _vm._u(
+                    [
+                      {
+                        key: "activator",
+                        fn: function(ref) {
+                          var on = ref.on
+                          return [
+                            _c(
+                              "div",
+                              _vm._g({ staticClass: "avatar-toggle px-2" }, on),
+                              [
+                                _vm._v(
+                                  "\n          " +
+                                    _vm._s(_vm.authUser.username) +
+                                    "\n          "
+                                ),
+                                _c(
+                                  "v-avatar",
+                                  { attrs: { size: "40" } },
+                                  [
+                                    _c("v-icon", { attrs: { dark: "" } }, [
+                                      _vm._v("account_circle")
+                                    ])
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ]
+                        }
+                      }
+                    ],
+                    null,
+                    false,
+                    2282864595
+                  )
+                },
+                [
+                  _vm._v(" "),
+                  _c(
+                    "v-list",
+                    { staticClass: "py-0" },
+                    [
+                      _c(
+                        "v-list-tile",
+                        {
+                          on: {
+                            click: function($event) {
+                              $event.stopPropagation()
+                              _vm.isLogout = true
+                            }
+                          }
+                        },
+                        [
+                          _c(
+                            "v-list-tile-title",
+                            { on: { "": function($event) {} } },
+                            [_vm._v("Salir")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "v-dialog",
+            {
+              attrs: { "max-width": "290" },
+              model: {
+                value: _vm.isLogout,
+                callback: function($$v) {
+                  _vm.isLogout = $$v
+                },
+                expression: "isLogout"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", { staticClass: "headline" }, [
+                    _vm._v("Salir")
+                  ]),
+                  _vm._v(" "),
+                  _c("v-card-text", [
+                    _vm._v("\n          ¿Estás seguro que salir?\n        ")
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", flat: "flat" },
+                          on: {
+                            click: function($event) {
+                              _vm.isLogout = false
+                            }
+                          }
+                        },
+                        [_vm._v("\n            Cancelar\n          ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", flat: "flat" },
+                          on: { click: _vm.logout }
+                        },
+                        [_vm._v("\n            Ok\n          ")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
         1
       )
     ],
@@ -107784,8 +107979,10 @@ new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   beforeCreate: function beforeCreate() {
     var tokenData = _store__WEBPACK_IMPORTED_MODULE_13__["store"].$sv.authService.getDecodedToken();
     var authUser = _store__WEBPACK_IMPORTED_MODULE_13__["store"].$sv.authService.getAuthUser();
+    var wd = _store__WEBPACK_IMPORTED_MODULE_13__["store"].$sv.authService.getWork();
     _store__WEBPACK_IMPORTED_MODULE_13__["store"].commit('auth/SET_TOKEN_DATA', tokenData);
     _store__WEBPACK_IMPORTED_MODULE_13__["store"].commit('auth/SET_AUTH_USER', authUser);
+    _store__WEBPACK_IMPORTED_MODULE_13__["store"].commit('auth/SET_WORK', wd);
   },
   render: function render(h) {
     return h(_App__WEBPACK_IMPORTED_MODULE_14__["default"]);
@@ -109124,6 +109321,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   namespaced: true,
   state: {
     authUser: false,
+    workingDay: false,
     tokenData: false
   },
   mutations: {
@@ -109132,6 +109330,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     SET_AUTH_USER: function SET_AUTH_USER(state, playload) {
       state.authUser = playload;
+    },
+    SET_WORK: function SET_WORK(state, playload) {
+      state.workingDay = playload;
     }
   },
   actions: {
@@ -109243,37 +109444,61 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       return logoutAdmin;
     }(),
-    logoutEmployee: function () {
-      var _logoutEmployee = _asyncToGenerator(
+    logout: function () {
+      var _logout = _asyncToGenerator(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-        var w;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
-                _context4.prev = 0;
+                return _context4.abrupt("return", this.$sv.authService.logout());
+
+              case 1:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+
+      function logout() {
+        return _logout.apply(this, arguments);
+      }
+
+      return logout;
+    }(),
+    logoutEmployee: function () {
+      var _logoutEmployee = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+        var w;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _context5.prev = 0;
                 w = this.$sv.authService.getWork();
-                _context4.next = 4;
+                _context5.next = 4;
                 return this.$sv.authService.logoutEmployee({
                   working_day_id: w.id
                 });
 
               case 4:
                 this.$sv.authService.stopWork();
-                return _context4.abrupt("return", true);
+                return _context5.abrupt("return", true);
 
               case 8:
-                _context4.prev = 8;
-                _context4.t0 = _context4["catch"](0);
-                return _context4.abrupt("return", Promise.reject(_context4.t0));
+                _context5.prev = 8;
+                _context5.t0 = _context5["catch"](0);
+                return _context5.abrupt("return", Promise.reject(_context5.t0));
 
               case 11:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this, [[0, 8]]);
+        }, _callee5, this, [[0, 8]]);
       }));
 
       function logoutEmployee() {
