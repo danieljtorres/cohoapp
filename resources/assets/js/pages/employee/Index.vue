@@ -79,7 +79,7 @@ import { constants } from 'crypto';
 export default {
   created() {
     const wd = this.$store.$sv.authService.getWork()
-    store.commit('auth/SET_WORK', wd)
+    this.$store.commit('auth/SET_WORK', wd)
     this.$store.dispatch('activities/getAll')
     this.$store.dispatch('activities/getActive')
   },
