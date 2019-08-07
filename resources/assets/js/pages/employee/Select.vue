@@ -28,22 +28,6 @@
     </v-content>
     <v-toolbar app clipped-left fixed height="58" class="header-app white--text elevation-1">
       <v-toolbar-title>Iniciar jornada</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-menu offset-y v-if="!authUser.role">
-        <template v-slot:activator="{ on }">
-          <div class="avatar-toggle px-2" v-on="on">
-            {{ authUser.username }}
-            <v-avatar size="40">
-              <v-icon dark>account_circle</v-icon>
-            </v-avatar>
-          </div>
-        </template>
-        <v-list class="py-0">
-          <v-list-tile @click.stop="isLogout = true">
-            <v-list-tile-title @>Salir</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
       <v-dialog v-model="isLogout" max-width="290">
         <v-card>
           <v-card-title class="headline">Salir</v-card-title>
@@ -67,6 +51,9 @@
         </v-card>
       </v-dialog>
     </v-toolbar>
+    <v-footer class="pa-3">
+      <div style="width: 100%" class="text-xs-center"> <span @click.stop="isLogout = true"> Cerrar Sesion </span></div>
+    </v-footer>
   </v-app>
 </template>
 

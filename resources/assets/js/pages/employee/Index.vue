@@ -89,13 +89,16 @@ export default {
   computed: {
     activities() {
       let acts = this.$store.state.activities.list
+      console.log(this.wd)
+      if(this.wd.category_id == 8 || this.wd.category_id == 9) {
+        return acts.filter((v) => {
+          return v.id == 2
+        })
+      }
       return acts
-      /*if(this.wd.id ==  || this.wd.id ==  ) {
-
-      }*/
     },
     activeActivity() { return this.$store.state.activities.active },
-    wd() { return this.$store.state.workingDay }
+    wd() { return this.$store.state.auth.workingDay }
     
   },
   methods: {
