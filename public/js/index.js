@@ -5366,6 +5366,56 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5416,6 +5466,12 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
   }(),
   data: function data() {
     return {
+      editDayDialog: false,
+      editDay: {
+        id: null,
+        retributed_hours: 0,
+        others: ''
+      },
       isNewRecord: false,
       dateTimeDialog: false,
       dayRecord: {
@@ -5512,6 +5568,14 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
     setCategory: function setCategory(val) {
       this.newRecord.category_id = val;
     },
+    setDayForEdit: function setDayForEdit(day) {
+      this.editDay = {
+        id: day.id,
+        retributed_hours: day.retributed_hours,
+        activity_id: day.others
+      };
+      this.editDayDialog = true;
+    },
     setRecordForEdit: function setRecordForEdit(record) {
       this.dayRecord = {
         id: record.id,
@@ -5567,67 +5631,65 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
         _this3.isEditRecord = false;
       })["catch"](function (err) {});
     },
+    editDayF: function editDayF() {
+      var _this4 = this;
+
+      var id = this.editDay.id;
+      var editDay = this.editDay;
+      delete editDay.id;
+      axios.put('/working-day/' + id, editDay).then(function (response) {
+        _this4.$store.dispatch('users/getEmployeeReport', _this4.params);
+
+        _this4.editDayDialog = false;
+        _this4.editDay = {
+          id: null,
+          retributed_hours: '',
+          others: ''
+        };
+      })["catch"](function (e) {
+        _this4.editDay = {
+          id: null,
+          retributed_hours: '',
+          others: ''
+        };
+        _this4.editDayDialog = false;
+      });
+    },
     saveToExcel: function saveToExcel() {
       this.$store.dispatch('users/getEmployeeReportToExcel', this.params);
     },
-    getHours: function getHours(start, end) {
-      var category = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-      var activity = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
-      var startMoment = this.$moment.unix(start);
-      var endMoment = this.$moment.unix(end);
-      var total = endMoment.diff(startMoment, 'hours', true);
-
-      if (category && activity) {
-        if (category != 3
-        /*Chofer*/
-        && activity == 1
-        /*Conduccion*/
-        ) total = 0;
-        if (activity == 5
-        /*Interrupcion*/
-        ) total = total * 0.70;
-      }
-
-      return total;
-    },
-    getTotals: function getTotals() {
-      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    getHours: function getHours() {
+      var actId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var records = arguments.length > 1 ? arguments[1] : undefined;
+      var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
       var total = 0;
+      var totalOf = 0;
+      var totalCom = 0;
       var _iteratorNormalCompletion = true;
       var _didIteratorError = false;
       var _iteratorError = undefined;
 
       try {
-        for (var _iterator = this.report[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var day = _step.value;
-          if (type == 'retributed') total += day.retributed_hours;
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+        for (var _iterator = records[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var record = _step.value;
+          var startMoment = this.$moment.unix(record.start);
+          var endMoment = this.$moment.unix(record.end);
 
-          try {
-            for (var _iterator2 = day.records[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var record = _step2.value;
-              if (type == record.schedule) total += this.getHours(record.start, record.end);
-
-              if (type == 'compute') {
-                total += this.getHours(record.start, record.end, day.category.id, record.activity.id);
-              }
-
-              if (type == null) total += this.getHours(record.start, record.end);
+          if (actId && record.activity_id && actId == record.activity_id && type == record.schedule) {
+            total += endMoment.diff(startMoment, 'hours', true);
+          } else if (actId && !type && actId == record.activity_id) {
+            total += endMoment.diff(startMoment, 'hours', true);
+          } else if (!actId && type && type == 'of') {
+            if (record.activity_id == 1 || record.activity_id == 2) {
+              total += endMoment.diff(startMoment, 'hours', true);
             }
-          } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-                _iterator2["return"]();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
+          } else if (!actId && type && type == 'employee') {
+            if (record.activity_id == 1 || record.activity_id == 2) {
+              totalOf += endMoment.diff(startMoment, 'hours', true);
+            }
+          } else if (!actId && type && type == 'company') {
+            if (record.activity_id == 5) {
+              totalCom += endMoment.diff(startMoment, 'hours', true);
             }
           }
         }
@@ -5646,6 +5708,73 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
         }
       }
 
+      if (!actId && type && type == 'employee') {
+        total = totalOf - 8;
+        if (total <= 0) return 0;
+      }
+
+      if (!actId && type && type == 'company') {
+        total = totalCom > 0 ? totalCom * 0.3 : 0;
+      }
+
+      return total;
+    },
+    getTotals: function getTotals() {
+      var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var total = 0;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.report[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var day = _step2.value;
+          if (type == 'retributed') total += day.retributed_hours;
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
+
+          try {
+            for (var _iterator3 = day.records[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var record = _step3.value;
+              if (type == record.schedule) total += this.getHours(record.start, record.end);
+
+              if (type == 'compute') {
+                total += this.getHours(record.start, record.end, day.category.id, record.activity.id);
+              }
+
+              if (type == null) total += this.getHours(record.start, record.end);
+            }
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                _iterator3["return"]();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+            _iterator2["return"]();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
       return total;
     },
     setNewRecordEnd: function setNewRecordEnd(e) {
@@ -5657,7 +5786,7 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
       this.dateTimeDialog = true;
     },
     saveDayRecord: function saveDayRecord() {
-      var _this4 = this;
+      var _this5 = this;
 
       var startDate = moment__WEBPACK_IMPORTED_MODULE_2___default()(this.dayRecord.start);
       var endDate = moment__WEBPACK_IMPORTED_MODULE_2___default()(this.dayRecord.end);
@@ -5669,10 +5798,10 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
       }
 
       axios.post('/working-record/save', this.dayRecord).then(function (response) {
-        _this4.$store.dispatch('users/getEmployeeReport', _this4.params);
+        _this5.$store.dispatch('users/getEmployeeReport', _this5.params);
 
-        _this4.dateTimeDialog = false;
-        _this4.dayRecord = {
+        _this5.dateTimeDialog = false;
+        _this5.dayRecord = {
           id: null,
           working_day_id: null,
           activity_id: null,
@@ -5680,17 +5809,18 @@ var momentnow = moment__WEBPACK_IMPORTED_MODULE_2___default()();
           end: null
         };
       })["catch"](function (e) {
-        _this4.dayRecord = {
+        _this5.dayRecord = {
           id: null,
           working_day_id: null,
           activity_id: null,
           start: null,
           end: null
         };
-        _this4.dateTimeDialog = !_this4.dateTimeDialog;
+        _this5.dateTimeDialog = !_this5.dateTimeDialog;
       });
     },
     roundTo: function roundTo(n) {
+      if (typeof n == 'string') return n;
       var multiplicator = Math.pow(10, 2);
       n = parseFloat((n * multiplicator).toFixed(11));
       return Math.round(n) / multiplicator;
@@ -18265,7 +18395,7 @@ utils.intFromLE = intFromLE;
 /*! exports provided: _args, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"/home/desarrollo/cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"/home/desarrollo/cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"/home/daniel/Desarrollo/cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"/home/daniel/Desarrollo/cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
 
 /***/ }),
 
@@ -62637,7 +62767,7 @@ var render = function() {
                     _c(
                       "th",
                       { staticClass: "column text-xs-left white--text" },
-                      [_vm._v("Total Hrs")]
+                      [_vm._v("Total")]
                     ),
                     _vm._v(" "),
                     _c(
@@ -62649,7 +62779,29 @@ var render = function() {
                     _c(
                       "th",
                       { staticClass: "column text-xs-left white--text" },
-                      [_vm._v("Horas Compensables")]
+                      [_vm._v("A favo"), _c("br"), _vm._v("trabajador")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("A favor"), _c("br"), _vm._v("empresa")]
+                    ),
+                    _vm._v(" "),
+                    _c("th", {
+                      staticClass: "column text-xs-left white--text"
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Hrs licencia"), _c("br"), _vm._v("retribuida")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      { staticClass: "column text-xs-left white--text" },
+                      [_vm._v("Otros")]
                     ),
                     _vm._v(" "),
                     _c("th", { staticClass: "column text-xs-left white--text" })
@@ -62668,8 +62820,8 @@ var render = function() {
                               staticClass: "td-hover",
                               attrs: {
                                 rowspan:
-                                  day.records.length > 1
-                                    ? day.records.length + 1
+                                  _vm.activities.length > 1
+                                    ? _vm.activities.length + 1
                                     : 2
                               },
                               on: {
@@ -62698,8 +62850,8 @@ var render = function() {
                             {
                               attrs: {
                                 rowspan:
-                                  day.records.length > 1
-                                    ? day.records.length + 1
+                                  _vm.activities.length > 1
+                                    ? _vm.activities.length + 1
                                     : 2
                               }
                             },
@@ -62707,24 +62859,8 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        !day.records.length
-                          ? _c("tr", { key: day.id + "na" }, [
-                              _c(
-                                "td",
-                                {
-                                  staticClass: "text-xs-center",
-                                  staticStyle: {
-                                    "border-left": "1px solid rgba(0,0,0,.12)"
-                                  },
-                                  attrs: { colspan: "7" }
-                                },
-                                [_vm._v(" No realizo actividades ")]
-                              )
-                            ])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _vm._l(day.records, function(record) {
-                          return _c("tr", { key: record.id + "r" }, [
+                        _vm._l(_vm.activities, function(act) {
+                          return _c("tr", { key: act.id + "a" + day.id }, [
                             _c(
                               "td",
                               {
@@ -62732,54 +62868,7 @@ var render = function() {
                                   "border-left": "1px solid rgba(0,0,0,.12)"
                                 }
                               },
-                              [_vm._v(" " + _vm._s(record.activity.name) + " ")]
-                            ),
-                            _vm._v(" "),
-                            _c("td", { staticClass: "text-xs-center" }, [
-                              _vm._v(
-                                _vm._s(
-                                  record.schedule == "day"
-                                    ? _vm.roundTo(
-                                        _vm.getHours(record.start, record.end)
-                                      )
-                                    : ""
-                                )
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c("td", { staticClass: "text-xs-center" }, [
-                              _vm._v(
-                                _vm._s(
-                                  record.schedule == "night"
-                                    ? _vm.roundTo(
-                                        _vm.getHours(record.start, record.end)
-                                      )
-                                    : ""
-                                )
-                              )
-                            ]),
-                            _vm._v(" "),
-                            _c(
-                              "td",
-                              { staticClass: "text-xs-center" },
-                              [
-                                _c(
-                                  "v-chip",
-                                  {
-                                    attrs: { outline: "", color: "secondary" }
-                                  },
-                                  [
-                                    _vm._v(
-                                      _vm._s(
-                                        _vm.roundTo(
-                                          _vm.getHours(record.start, record.end)
-                                        )
-                                      )
-                                    )
-                                  ]
-                                )
-                              ],
-                              1
+                              [_vm._v(" " + _vm._s(act.name) + " ")]
                             ),
                             _vm._v(" "),
                             _c("td", { staticClass: "text-xs-center" }, [
@@ -62787,107 +62876,328 @@ var render = function() {
                                 " " +
                                   _vm._s(
                                     _vm.roundTo(
-                                      _vm.getHours(
-                                        record.start,
-                                        record.end,
-                                        day.category.id,
-                                        record.activity.id
-                                      )
-                                    )
+                                      _vm.getHours(act.id, day.records, "day")
+                                    ) || ""
                                   ) +
                                   " "
                               )
                             ]),
                             _vm._v(" "),
                             _c("td", { staticClass: "text-xs-center" }, [
-                              _vm._v(_vm._s(day.retributed_hours))
+                              _vm._v(
+                                " " +
+                                  _vm._s(
+                                    _vm.roundTo(
+                                      _vm.getHours(act.id, day.records, "night")
+                                    ) || ""
+                                  ) +
+                                  " "
+                              )
                             ]),
+                            _vm._v(" "),
+                            _c("td", { staticClass: "text-xs-center" }, [
+                              _vm._v(
+                                " " +
+                                  _vm._s(
+                                    _vm.roundTo(
+                                      _vm.getHours(act.id, day.records)
+                                    )
+                                  ) +
+                                  " "
+                              )
+                            ]),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "text-xs-center",
+                                    attrs: { rowspan: "2" }
+                                  },
+                                  [
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(
+                                          _vm.roundTo(
+                                            _vm.getHours(
+                                              null,
+                                              day.records,
+                                              "of"
+                                            )
+                                          )
+                                        ) +
+                                        " "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id != 1 && act.id != 2
+                              ? _c("td", { staticClass: "text-xs-center" })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "text-xs-center",
+                                    attrs: { rowspan: "2" }
+                                  },
+                                  [
+                                    _vm._v(
+                                      " " +
+                                        _vm._s(
+                                          _vm.roundTo(
+                                            _vm.getHours(
+                                              null,
+                                              day.records,
+                                              "employee"
+                                            )
+                                          )
+                                        ) +
+                                        " "
+                                    )
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id != 1 && act.id != 2
+                              ? _c("td", { staticClass: "text-xs-center" })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c("td", {
+                                  staticClass: "text-xs-center",
+                                  attrs: { rowspan: "2" }
+                                })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id != 1 && act.id != 2
+                              ? _c("td", { staticClass: "text-xs-center" }, [
+                                  _vm._v(
+                                    " " +
+                                      _vm._s(
+                                        act.id == 5
+                                          ? _vm.roundTo(
+                                              _vm.getHours(
+                                                null,
+                                                day.records,
+                                                "company"
+                                              )
+                                            )
+                                          : ""
+                                      ) +
+                                      " "
+                                  )
+                                ])
+                              : _vm._e(),
                             _vm._v(" "),
                             _c(
                               "td",
                               { staticClass: "text-xs-center" },
                               [
-                                _c(
-                                  "v-menu",
-                                  {
-                                    attrs: { "offset-y": "" },
-                                    scopedSlots: _vm._u(
-                                      [
-                                        {
-                                          key: "activator",
-                                          fn: function(ref) {
-                                            var on = ref.on
-                                            return [
-                                              _c("v-icon", _vm._g({}, on), [
-                                                _vm._v("list")
-                                              ])
-                                            ]
-                                          }
-                                        }
-                                      ],
-                                      null,
-                                      true
-                                    )
-                                  },
-                                  [
-                                    _vm._v(" "),
-                                    _c(
-                                      "v-list",
-                                      [
-                                        _c(
-                                          "v-list-tile",
+                                day.records.filter(function(v) {
+                                  return v.activity_id == act.id
+                                }).length
+                                  ? _c(
+                                      "v-menu",
+                                      {
+                                        attrs: { "offset-y": "" },
+                                        scopedSlots: _vm._u(
                                           [
-                                            _c(
-                                              "v-list-tile-title",
-                                              [
-                                                _c(
-                                                  "v-icon",
-                                                  {
-                                                    attrs: { small: "" },
-                                                    on: {
-                                                      click: function($event) {
-                                                        return _vm.setRecordForEdit(
-                                                          record
-                                                        )
-                                                      }
-                                                    }
-                                                  },
-                                                  [
-                                                    _vm._v(
-                                                      "\n                          editx\n                        "
-                                                    )
-                                                  ]
-                                                )
-                                              ],
-                                              1
-                                            )
+                                            {
+                                              key: "activator",
+                                              fn: function(ref) {
+                                                var on = ref.on
+                                                return [
+                                                  _c("v-icon", _vm._g({}, on), [
+                                                    _vm._v("list")
+                                                  ])
+                                                ]
+                                              }
+                                            }
                                           ],
-                                          1
-                                        ),
+                                          null,
+                                          true
+                                        )
+                                      },
+                                      [
                                         _vm._v(" "),
                                         _c(
-                                          "v-list-tile",
+                                          "v-list",
+                                          _vm._l(
+                                            day.records.filter(function(v) {
+                                              return v.activity_id == act.id
+                                            }),
+                                            function(re) {
+                                              return _c(
+                                                "v-list-tile",
+                                                { key: re.id },
+                                                [
+                                                  _c(
+                                                    "v-list-tile-title",
+                                                    [
+                                                      _c(
+                                                        "v-icon",
+                                                        {
+                                                          attrs: { small: "" },
+                                                          on: {
+                                                            click: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.setRecordForEdit(
+                                                                re
+                                                              )
+                                                            }
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "\n                          edit\n                        "
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(
+                                                        " " +
+                                                          _vm._s(
+                                                            _vm._f(
+                                                              "formatDate"
+                                                            )(
+                                                              re.start,
+                                                              _vm.$moment,
+                                                              "HH:mm"
+                                                            )
+                                                          ) +
+                                                          " - " +
+                                                          _vm._s(
+                                                            _vm._f(
+                                                              "formatDate"
+                                                            )(
+                                                              re.end,
+                                                              _vm.$moment,
+                                                              "HH:mm"
+                                                            )
+                                                          ) +
+                                                          "\n                      "
+                                                      )
+                                                    ],
+                                                    1
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            }
+                                          ),
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  : _vm._e()
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "text-xs-center",
+                                    attrs: {
+                                      rowspan:
+                                        _vm.activities.length > 1
+                                          ? _vm.activities.length
+                                          : 2
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(day.retributed_hours))]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "text-xs-center",
+                                    attrs: {
+                                      rowspan:
+                                        _vm.activities.length > 1
+                                          ? _vm.activities.length
+                                          : 2
+                                    }
+                                  },
+                                  [_vm._v(_vm._s(day.others))]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            act.id == 1
+                              ? _c(
+                                  "td",
+                                  {
+                                    staticClass: "text-xs-center",
+                                    attrs: {
+                                      rowspan:
+                                        _vm.activities.length > 1
+                                          ? _vm.activities.length
+                                          : 2
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "v-menu",
+                                      {
+                                        attrs: { "offset-y": "" },
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "activator",
+                                              fn: function(ref) {
+                                                var on = ref.on
+                                                return [
+                                                  _c("v-icon", _vm._g({}, on), [
+                                                    _vm._v("list")
+                                                  ])
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      },
+                                      [
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-list",
                                           [
                                             _c(
-                                              "v-list-tile-title",
+                                              "v-list-tile",
                                               [
                                                 _c(
-                                                  "v-icon",
-                                                  {
-                                                    attrs: { small: "" },
-                                                    on: {
-                                                      click: function($event) {
-                                                        return _vm.setRecordForDelete(
-                                                          record.id
-                                                        )
-                                                      }
-                                                    }
-                                                  },
+                                                  "v-list-tile-title",
                                                   [
-                                                    _vm._v(
-                                                      "\n                          delete\n                        "
+                                                    _c(
+                                                      "v-icon",
+                                                      {
+                                                        attrs: { small: "" },
+                                                        on: {
+                                                          click: function(
+                                                            $event
+                                                          ) {
+                                                            return _vm.setDayForEdit(
+                                                              day
+                                                            )
+                                                          }
+                                                        }
+                                                      },
+                                                      [
+                                                        _vm._v(
+                                                          "\n                          delete\n                        "
+                                                        )
+                                                      ]
                                                     )
-                                                  ]
+                                                  ],
+                                                  1
                                                 )
                                               ],
                                               1
@@ -62901,9 +63211,7 @@ var render = function() {
                                   ],
                                   1
                                 )
-                              ],
-                              1
-                            )
+                              : _vm._e()
                           ])
                         })
                       ]
@@ -62919,47 +63227,23 @@ var render = function() {
                           _vm._v(" "),
                           _c("td"),
                           _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-xs-center white--text" },
-                            [_vm._v(_vm._s(_vm.roundTo(_vm.getTotals("day"))))]
-                          ),
+                          _c("td"),
                           _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-xs-center white--text" },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.roundTo(_vm.getTotals("night")))
-                              )
-                            ]
-                          ),
+                          _c("td"),
                           _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-xs-center white--text" },
-                            [_vm._v(_vm._s(_vm.roundTo(_vm.getTotals())))]
-                          ),
+                          _c("td"),
                           _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-xs-center white--text" },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.roundTo(_vm.getTotals("compute")))
-                              )
-                            ]
-                          ),
+                          _c("td"),
                           _vm._v(" "),
-                          _c(
-                            "td",
-                            { staticClass: "text-xs-center white--text" },
-                            [
-                              _vm._v(
-                                _vm._s(_vm.roundTo(_vm.getTotals("retributed")))
-                              )
-                            ]
-                          ),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
+                          _vm._v(" "),
+                          _c("td"),
                           _vm._v(" "),
                           _c("td")
                         ])
@@ -63027,7 +63311,7 @@ var render = function() {
                             [
                               _c("v-datetime-picker", {
                                 attrs: {
-                                  format: "YYYY-MM-DD HH:mm:ss",
+                                  format: "YYYY-MM-DD HH:mm",
                                   label: "Seleccionar Fecha Inicio"
                                 },
                                 model: {
@@ -63048,7 +63332,7 @@ var render = function() {
                             [
                               _c("v-datetime-picker", {
                                 attrs: {
-                                  format: "YYYY-MM-DD HH:mm:ss",
+                                  format: "YYYY-MM-DD HH:mm",
                                   label: "Seleccionar Fecha Fin"
                                 },
                                 model: {
@@ -63112,6 +63396,128 @@ var render = function() {
                         {
                           attrs: { color: "blue darken-1", flat: "" },
                           on: { click: _vm.saveDayRecord }
+                        },
+                        [_vm._v("Guardar")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-dialog",
+            {
+              attrs: { width: "500" },
+              model: {
+                value: _vm.editDayDialog,
+                callback: function($$v) {
+                  _vm.editDayDialog = $$v
+                },
+                expression: "editDayDialog"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", [
+                    _c("span", { staticClass: "headline" }, [
+                      _vm._v("Editar Dia")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-container",
+                        { attrs: { "grid-list-md": "" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { wrap: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "", sm12: "", md4: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      type: "number",
+                                      label: "Hrs retribuidas",
+                                      min: "1"
+                                    },
+                                    model: {
+                                      value: _vm.editDay.retributed_hours,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.editDay,
+                                          "retributed_hours",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "editDay.retributed_hours"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "", sm12: "", md12: "" } },
+                                [
+                                  _c("v-textarea", {
+                                    attrs: { label: "Otros" },
+                                    model: {
+                                      value: _vm.editDay.others,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.editDay, "others", $$v)
+                                      },
+                                      expression: "editDay.others"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", flat: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.editDayDialog = false
+                            }
+                          }
+                        },
+                        [_vm._v("Cancelar")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", flat: "" },
+                          on: { click: _vm.editDayF }
                         },
                         [_vm._v("Guardar")]
                       )
@@ -110056,7 +110462,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/desarrollo/cohoapp/resources/assets/js/index.js */"./resources/assets/js/index.js");
+module.exports = __webpack_require__(/*! /home/daniel/Desarrollo/cohoapp/resources/assets/js/index.js */"./resources/assets/js/index.js");
 
 
 /***/ }),

@@ -70,33 +70,57 @@
               <th class="column text-xs-left white--text">Actividad</th>
               <th class="column text-xs-left white--text">Dia</th>
               <th class="column text-xs-left white--text">Noche</th>
-              <th class="column text-xs-left white--text">Total Hrs</th>
+              <th class="column text-xs-left white--text">Total</th>
               <th class="column text-xs-left white--text">Total OF</th>
-              <th class="column text-xs-left white--text">Horas Compensables</th>
+              <th class="column text-xs-left white--text">A favo<br>trabajador</th>
+              <th class="column text-xs-left white--text">A favor<br>empresa</th>
+              <th class="column text-xs-left white--text"></th>
+              <th class="column text-xs-left white--text">Hrs licencia<br>retribuida</th>
+              <th class="column text-xs-left white--text">Otros</th>
               <th class="column text-xs-left white--text"></th>
             </tr>
           </thead>
           <tbody>
             <template v-for="day in report">
               <tr :key="day.id">
-                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2" class="td-hover" @click="openDayRecordDialog(day.id)">
+                <td :rowspan="activities.length > 1 ? activities.length + 1 : 2" class="td-hover" @click="openDayRecordDialog(day.id)">
                   {{ day.start | formatDate($moment, 'MM/DD/YYYY') }}
                 </td>
-                <td :rowspan="day.records.length > 1 ? day.records.length + 1 : 2">{{ day.category.name }}</td>
+                <td :rowspan="activities.length > 1 ? activities.length + 1 : 2">{{ day.category.name }}</td>
               </tr>
-              <tr v-if="!day.records.length" :key="day.id+'na'">
-                <td colspan="7" class="text-xs-center" style="border-left: 1px solid rgba(0,0,0,.12);"> No realizo actividades </td>
-              </tr>
-              <tr v-for="record in day.records" :key="record.id+'r'">
-                <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{record.activity.name}} </td>
-                <td class="text-xs-center">{{record.schedule == 'day' ? roundTo(getHours(record.start, record.end)) : ''}}</td>
-                <td class="text-xs-center">{{record.schedule == 'night' ? roundTo(getHours(record.start, record.end)) : ''}}</td>
+              <tr v-for="act in activities" :key="act.id+'a'+day.id">
+                <td style="border-left: 1px solid rgba(0,0,0,.12);"> {{act.name}} </td>
+                <td class="text-xs-center"> {{roundTo(getHours(act.id, day.records, 'day')) || ''}} </td>
+                <td class="text-xs-center"> {{roundTo(getHours(act.id, day.records, 'night')) || ''}} </td>
+                <td class="text-xs-center"> {{roundTo(getHours(act.id, day.records))}} </td>
+                <td class="text-xs-center" v-if="act.id == 1" rowspan="2"> {{roundTo(getHours(null, day.records, 'of'))}} </td>
+                <td class="text-xs-center" v-if="act.id != 1 && act.id != 2"> </td>
+                <td class="text-xs-center" v-if="act.id == 1" rowspan="2"> {{roundTo(getHours(null, day.records, 'employee'))}} </td>
+                <td class="text-xs-center" v-if="act.id != 1 && act.id != 2"> </td>
+                <td class="text-xs-center" v-if="act.id == 1" rowspan="2"></td>
+                <td class="text-xs-center" v-if="act.id != 1 && act.id != 2"> {{act.id == 5 ? roundTo(getHours(null, day.records, 'company')) : ''}} </td>
                 <td class="text-xs-center">
-                  <v-chip outline color="secondary">{{ roundTo(getHours(record.start, record.end)) }}</v-chip>
+                  <v-menu offset-y v-if="day.records.filter((v) => v.activity_id == act.id).length">
+                    <template v-slot:activator="{ on }">
+                      <v-icon v-on="on">list</v-icon>
+                    </template>
+                    <v-list>
+                      <v-list-tile v-for="re in day.records.filter((v) => v.activity_id == act.id)" :key="re.id">
+                        <v-list-tile-title>
+                          <v-icon
+                            small
+                            @click="setRecordForEdit(re)"
+                          >
+                            edit
+                          </v-icon> {{ re.start | formatDate($moment, 'HH:mm') }} - {{ re.end | formatDate($moment, 'HH:mm') }}
+                        </v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
                 </td>
-                <td class="text-xs-center"> {{ roundTo(getHours(record.start, record.end, day.category.id, record.activity.id)) }} </td>
-                <td class="text-xs-center">{{ day.retributed_hours }}</td>
-                <td class="text-xs-center">
+                <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">{{ day.retributed_hours }}</td>
+                <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">{{ day.others }}</td>
+                <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">
                   <v-menu offset-y>
                     <template v-slot:activator="{ on }">
                       <v-icon v-on="on">list</v-icon>
@@ -106,17 +130,7 @@
                         <v-list-tile-title>
                           <v-icon
                             small
-                            @click="setRecordForEdit(record)"
-                          >
-                            editx
-                          </v-icon>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                      <v-list-tile>
-                        <v-list-tile-title>
-                          <v-icon
-                            small
-                            @click="setRecordForDelete(record.id)"
+                            @click="setDayForEdit(day)"
                           >
                             delete
                           </v-icon>
@@ -131,11 +145,20 @@
               <td class="white--text">TOTAL</td>
               <td></td>
               <td></td>
-              <td class="text-xs-center white--text">{{ roundTo(getTotals('day')) }}</td>
+              <!--<td class="text-xs-center white--text">{{ roundTo(getTotals('day')) }}</td>
               <td class="text-xs-center white--text">{{ roundTo(getTotals('night')) }}</td>
               <td class="text-xs-center white--text">{{ roundTo(getTotals()) }}</td>
               <td class="text-xs-center white--text">{{ roundTo(getTotals('compute')) }}</td>
-              <td class="text-xs-center white--text">{{ roundTo(getTotals('retributed')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('retributed')) }}</td>-->
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
               <td></td>
             </tr>
           </tbody>
@@ -154,10 +177,10 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12 sm6 md6>
-                <v-datetime-picker format="YYYY-MM-DD HH:mm:ss" label="Seleccionar Fecha Inicio" v-model="dayRecord.start"></v-datetime-picker>
+                <v-datetime-picker format="YYYY-MM-DD HH:mm" label="Seleccionar Fecha Inicio" v-model="dayRecord.start"></v-datetime-picker>
               </v-flex>
               <v-flex xs12 sm6 md6>
-                <v-datetime-picker format="YYYY-MM-DD HH:mm:ss" label="Seleccionar Fecha Fin" v-model="dayRecord.end"></v-datetime-picker>
+                <v-datetime-picker format="YYYY-MM-DD HH:mm" label="Seleccionar Fecha Fin" v-model="dayRecord.end"></v-datetime-picker>
               </v-flex>
               <v-flex xs12>
                 <v-select :items="activities" @input="setActivity" :value="dayRecord.activity_id" item-text="name" item-value="id" label="Actividades" name="category" data-vv-name="category"></v-select>
@@ -168,6 +191,33 @@
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="dateTimeDialog = false">Cancelar</v-btn>
             <v-btn color="blue darken-1" flat @click="saveDayRecord">Guardar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="editDayDialog" width="500">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Editar Dia</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-flex xs12 sm12 md4>
+                  <v-text-field v-model="editDay.retributed_hours" type="number" label="Hrs retribuidas" min="1"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm12 md12>
+                  <v-textarea
+                    label="Otros"
+                    v-model="editDay.others"
+                  ></v-textarea>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="editDayDialog = false">Cancelar</v-btn>
+            <v-btn color="blue darken-1" flat @click="editDayF">Guardar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -198,6 +248,12 @@ export default {
     this.newRecord.user_id = this.params.user_id
   },
   data: () => ({
+    editDayDialog: false,
+    editDay: {
+      id: null,
+      retributed_hours: 0,
+      others: ''
+    },
     isNewRecord: false,
     dateTimeDialog: false,
     dayRecord: {
@@ -275,6 +331,15 @@ export default {
     setCategory(val) {
       this.newRecord.category_id = val
     },
+    setDayForEdit(day) {
+      this.editDay = {
+        id: day.id,
+        retributed_hours: day.retributed_hours,
+        activity_id: day.others,
+      }
+
+      this.editDayDialog = true
+    },
     setRecordForEdit(record) {
       this.dayRecord = {
         id: record.id,
@@ -334,18 +399,74 @@ export default {
         
       });
     },
+    editDayF() {
+      const id = this.editDay.id
+      const editDay = this.editDay
+      delete editDay.id
+
+      axios.put('/working-day/'+id, editDay)
+        .then(response => {
+          this.$store.dispatch('users/getEmployeeReport', this.params)
+          this.editDayDialog = false
+
+          this.editDay = {
+            id: null,
+            retributed_hours: '',
+            others: ''
+          }
+        })
+        .catch(e => {
+          this.editDay = {
+            id: null,
+            retributed_hours: '',
+            others: ''
+          }
+
+          this.editDayDialog = false
+        })
+    },
     saveToExcel() {
       this.$store.dispatch('users/getEmployeeReportToExcel', this.params)
     },
-    getHours(start, end, category = null, activity = null) {
-      const startMoment = this.$moment.unix(start)
-      const endMoment = this.$moment.unix(end)
+    getHours(actId = null, records, type = null) {
+      let total = 0
+      let totalOf = 0
+      let totalCom = 0
+      
+      for (const record of records) {
+        const startMoment = this.$moment.unix(record.start)
+        const endMoment = this.$moment.unix(record.end)
 
-      let total = endMoment.diff(startMoment, 'hours', true)
+        if (actId && record.activity_id && actId == record.activity_id && type == record.schedule) {
+          total += endMoment.diff(startMoment, 'hours', true)
 
-      if (category && activity) {
-        if(category != 3/*Chofer*/ && activity == 1/*Conduccion*/) total = 0
-        if(activity == 5/*Interrupcion*/) total = total * 0.70
+        } else if (actId && !type && actId == record.activity_id) {
+          total += endMoment.diff(startMoment, 'hours', true)
+
+        } else if (!actId && type && type == 'of') {
+          if (record.activity_id == 1 || record.activity_id == 2) {
+            total += endMoment.diff(startMoment, 'hours', true)
+          }
+
+        } else if (!actId && type && type == 'employee') {
+          if (record.activity_id == 1 || record.activity_id == 2) {
+            totalOf += endMoment.diff(startMoment, 'hours', true)
+          }
+
+        } else if (!actId && type && type == 'company') {
+          if (record.activity_id == 5) {
+            totalCom += endMoment.diff(startMoment, 'hours', true)
+          }
+        }
+      }
+
+      if (!actId && type && type == 'employee') {
+        total = totalOf - 8
+        if (total <= 0) return 0
+      }
+
+      if (!actId && type && type == 'company') {
+        total = (totalCom > 0) ? totalCom * 0.3 : 0 
       }
 
       return total
@@ -410,6 +531,7 @@ export default {
         })
     },
     roundTo(n) {
+      if (typeof n == 'string') return n
       var multiplicator = Math.pow(10, 2);
       n = parseFloat((n * multiplicator).toFixed(11));
       return Math.round(n) / multiplicator;

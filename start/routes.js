@@ -40,6 +40,7 @@ Route.group(() => {
   Route.delete('working-record/delete/:record_id', 'WorkingRecordController.delete').middleware('auth')
 
   Route.post('working-day/save', 'WorkingDayController.save').middleware('auth')
+  Route.put('working-day/:working_day_id', 'WorkingDayController.update').middleware('auth')
 
   Route.get('users/admins', 'UserController.getAdmins').middleware('auth')
   Route.get('users/employees', 'UserController.getEmployees').middleware('auth')
