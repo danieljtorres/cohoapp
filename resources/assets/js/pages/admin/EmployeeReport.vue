@@ -22,9 +22,9 @@
                 <v-flex xs12 sm8 md8>
                   <v-select :items="categories" @input="setCategory" :value="newRecord.category_id" item-text="name" item-value="id" label="Categoria laboral" name="category" data-vv-name="category"></v-select>
                 </v-flex>
-                <v-flex xs12 sm4 md4>
+                <!--<v-flex xs12 sm4 md4>
                   <v-text-field v-model="newRecord.retributed_hours" type="number" label="Hrs retribuidas" min="1"></v-text-field>
-                </v-flex>
+                </v-flex>-->
               </v-layout>
             </v-container>
           </v-card-text>
@@ -72,7 +72,7 @@
               <th class="column text-xs-left white--text">Noche</th>
               <th class="column text-xs-left white--text">Total</th>
               <th class="column text-xs-left white--text">Total OF</th>
-              <th class="column text-xs-left white--text">A favo<br>trabajador</th>
+              <th class="column text-xs-left white--text">A favor<br>trabajador</th>
               <th class="column text-xs-left white--text">A favor<br>empresa</th>
               <th class="column text-xs-left white--text"></th>
               <th class="column text-xs-left white--text">Hrs licencia<br>retribuida</th>
@@ -121,23 +121,12 @@
                 <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">{{ day.retributed_hours }}</td>
                 <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">{{ day.others }}</td>
                 <td class="text-xs-center" v-if="act.id == 1" :rowspan="activities.length > 1 ? activities.length : 2">
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">list</v-icon>
-                    </template>
-                    <v-list>
-                      <v-list-tile>
-                        <v-list-tile-title>
-                          <v-icon
-                            small
-                            @click="setDayForEdit(day)"
-                          >
-                            delete
-                          </v-icon>
-                        </v-list-tile-title>
-                      </v-list-tile>
-                    </v-list>
-                  </v-menu>
+                  <v-icon
+                    small
+                    @click="setDayForEdit(day)"
+                  >
+                    edit
+                  </v-icon>
                 </td>
               </tr>
             </template>
