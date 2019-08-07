@@ -2,6 +2,7 @@
 
 const User = use('App/Models/User')
 const WorkingDay = use('App/Models/WorkingDay')
+const WorkingActivity = use('App/Models/WorkingActivity')
 const Mail = use('Mail')
 const Helpers = use('Helpers')
 const Excel = require('exceljs');
@@ -149,6 +150,8 @@ class UserController {
         builder.with('activity')
       }).with('category').fetch()
 
+      const activities = await WorkingActivity.all()
+
       const fileName = 'start-'+start_filter+'-end-'+end_filter+'-'+moment().unix()+'.xlsx'
 
       const wb = new Excel.Workbook();
@@ -156,12 +159,15 @@ class UserController {
 
       for (let index = 1; index < 9; index++) {
         let column = sheet.getColumn(index)
-        column.width = 15
+        column.width = 19
         column.font = { name: 'Arial', size: 10 }
       }
 
       sheet.addRow([
         user.firstname + ' ' + user.lastname,
+        '',
+        '',
+        '',
         '',
         '',
         '',
@@ -181,37 +187,61 @@ class UserController {
         'Noche',
         'Total',
         'Totsl OF',
+        'A favor empleado',
+        'A favor empresa',
         'Hrs compensables',
+        'Otros'
       ])
 
       const workingDaysArr = workingDays.toJSON()
+      const activitiesArr = activities.toJSON()
 
       const roundTo = this.roundTo
+      const getHours = this.getHours
+
+      let row = 3
 
       for (const day of workingDaysArr) {
-        for (const record of day.records) {
+        for (const activity of activitiesArr) {
           sheet.addRow([
             moment.unix(day.start).format('MM/DD/YYYY'),
             day.category.name,
-            record.activity.name,
-            record.schedule == 'day' ? roundTo(this.getHours(record.start, record.end), 2) : '',
-            record.schedule == 'night' ? roundTo(this.getHours(record.start, record.end), 2) : '',
-            roundTo(this.getHours(record.start, record.end, day.category.compute), 2),
-            roundTo(this.getHours(record.start, record.end, day.category.id, record.activity.id), 2),
-            day.retributed_hours
+            activity.name,
+            roundTo(getHours(activity.id, day.records, 'day')) || '',
+            roundTo(getHours(activity.id, day.records, 'night')) || '',
+            roundTo(getHours(activity.id, day.records)) || '',
+            activity.id == 1 ? roundTo(getHours(null, day.records, 'of')) || '' : '',
+            activity.id == 1 ? roundTo(getHours(null, day.records, 'employee')) || '' : '',
+            activity.id == 5 ? roundTo(getHours(null, day.records, 'company')) || '' : '',
+            day.retributed_hours,
+            day.others,
           ])
         }
+        let init = row = row + 1
+        let end = row = row + 4
+
+        sheet.mergeCells('A'+init+':A'+end)
+        sheet.mergeCells('B'+init+':B'+end)
+
+        sheet.mergeCells('G'+init+':G'+(init+1))
+        sheet.mergeCells('H'+init+':H'+(init+1))
+
+        sheet.mergeCells('J'+init+':J'+end)
+        sheet.mergeCells('K'+init+':K'+end)
       }
 
       sheet.addRow([
         'TOTAL',
         '',
         '',
-        roundTo(this.getTotals(workingDaysArr,'day'), 2),
-        roundTo(this.getTotals(workingDaysArr,'night'), 2),
-        roundTo(this.getTotals(workingDaysArr), 2),
-        roundTo(this.getTotals(workingDaysArr, 'compute'), 2),
-        roundTo(this.getTotals(workingDaysArr, 'retributed'), 2)
+        roundTo(this.getTotals('day', workingDaysArr), 2),
+        roundTo(this.getTotals('night', workingDaysArr), 2),
+        roundTo(this.getTotals(null, workingDaysArr), 2),
+        roundTo(this.getTotals('of', workingDaysArr), 2),
+        roundTo(this.getTotals('employee', workingDaysArr), 2),
+        roundTo(this.getTotals('company', workingDaysArr), 2),
+        roundTo(this.getTotals('retributed', workingDaysArr), 2),
+        ''
       ])
 
       response.implicitEnd = false
@@ -230,31 +260,64 @@ class UserController {
     }
   }
 
-  getHours(start, end, category = null, activity = null) {
-    const startMoment = moment.unix(start)
-    const endMoment = moment.unix(end)
+  getHours(actId = null, records, type = null) {
+    let total = 0
+    let totalOf = 0
+    let totalCom = 0
+    
+    for (const record of records) {
+      const startMoment = moment.unix(record.start)
+      const endMoment = moment.unix(record.end)
 
-    let total = endMoment.diff(startMoment, 'hours', true)
+      if (actId && record.activity_id && actId == record.activity_id && type == record.schedule) {
+        total += endMoment.diff(startMoment, 'hours', true)
 
-    if (category && activity) {
-      if (category != 3/*Chofer*/ && activity == 1/*Conduccion*/) total = 0
-      if (activity == 5/*Interrupcion*/) total = total * 0.70
+      } else if (actId && !type && actId == record.activity_id) {
+        total += endMoment.diff(startMoment, 'hours', true)
+
+      } else if (!actId && type && type == 'of') {
+        if (record.activity_id == 1 || record.activity_id == 2) {
+          total += endMoment.diff(startMoment, 'hours', true)
+        }
+
+      } else if (!actId && type && type == 'day' && type == record.schedule) {
+          total += endMoment.diff(startMoment, 'hours', true)
+
+      }  else if (!actId && type && type == 'night' && type == record.schedule) {
+          total += endMoment.diff(startMoment, 'hours', true)
+
+      } else if (!actId && !type) {
+          total += endMoment.diff(startMoment, 'hours', true)
+
+      } else if (!actId && type && type == 'employee') {
+        if (record.activity_id == 1 || record.activity_id == 2) {
+          totalOf += endMoment.diff(startMoment, 'hours', true)
+        }
+
+      } else if (!actId && type && type == 'company') {
+        if (record.activity_id == 5) {
+          totalCom += endMoment.diff(startMoment, 'hours', true)
+        }
+      }
+    }
+
+    if (!actId && type && type == 'employee') {
+      total = totalOf - 8
+      if (total <= 0) return 0
+    }
+
+    if (!actId && type && type == 'company') {
+      total = (totalCom > 0) ? totalCom * 0.3 : 0 
     }
 
     return total
   }
 
-  getTotals(report, type = null) {
+  getTotals(type = null, report) {
     let total = 0
     for (const day of report) {
       if (type == 'retributed') total += day.retributed_hours
-      for (const record of day.records) {
-        if (type == record.schedule) total += this.getHours(record.start, record.end)
-        if (type == 'compute') {
-          total += this.getHours(record.start, record.end, day.category.id, record.activity.id)
-        }
-        if (type == null) total += this.getHours(record.start, record.end)
-      }
+      else total += this.getHours(null, day.records, type)
     }
     return total
   }

@@ -134,19 +134,14 @@
               <td class="white--text">TOTAL</td>
               <td></td>
               <td></td>
-              <!--<td class="text-xs-center white--text">{{ roundTo(getTotals('day')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('day')) }}</td>
               <td class="text-xs-center white--text">{{ roundTo(getTotals('night')) }}</td>
               <td class="text-xs-center white--text">{{ roundTo(getTotals()) }}</td>
-              <td class="text-xs-center white--text">{{ roundTo(getTotals('compute')) }}</td>
-              <td class="text-xs-center white--text">{{ roundTo(getTotals('retributed')) }}</td>-->
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('of')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('employee')) }}</td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('company')) }}</td>
               <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td class="text-xs-center white--text">{{ roundTo(getTotals('retributed')) }}</td>
               <td></td>
               <td></td>
             </tr>
@@ -437,6 +432,15 @@ export default {
             total += endMoment.diff(startMoment, 'hours', true)
           }
 
+        } else if (!actId && type && type == 'day' && type == record.schedule) {
+            total += endMoment.diff(startMoment, 'hours', true)
+
+        }  else if (!actId && type && type == 'night' && type == record.schedule) {
+            total += endMoment.diff(startMoment, 'hours', true)
+
+        } else if (!actId && !type) {
+            total += endMoment.diff(startMoment, 'hours', true)
+
         } else if (!actId && type && type == 'employee') {
           if (record.activity_id == 1 || record.activity_id == 2) {
             totalOf += endMoment.diff(startMoment, 'hours', true)
@@ -464,13 +468,7 @@ export default {
       let total = 0
       for (const day of this.report) {
         if (type == 'retributed') total += day.retributed_hours
-        for (const record of day.records) {
-          if (type == record.schedule) total += this.getHours(record.start, record.end)
-          if (type == 'compute') {
-            total += this.getHours(record.start, record.end, day.category.id, record.activity.id)
-          }
-          if (type == null) total += this.getHours(record.start, record.end)
-        }
+        else total += this.getHours(null, day.records, type)
       }
       return total
     },
