@@ -209,10 +209,10 @@ class UserController {
             activity.name,
             roundTo(getHours(activity.id, day.records, 'day')) || '',
             roundTo(getHours(activity.id, day.records, 'night')) || '',
-            roundTo(getHours(activity.id, day.records)) || '',
-            activity.id == 1 ? roundTo(getHours(null, day.records, 'of')) || '' : '',
-            activity.id == 1 ? roundTo(getHours(null, day.records, 'employee')) || '' : '',
-            activity.id == 5 ? roundTo(getHours(null, day.records, 'company')) || '' : '',
+            roundTo(getHours(activity.id, day.records)),
+            activity.id == 1 ? roundTo(getHours(null, day.records, 'of')) : '',
+            activity.id == 1 ? roundTo(getHours(null, day.records, 'employee')) : '',
+            activity.id == 5 ? roundTo(getHours(null, day.records, 'company')) : '',
             day.retributed_hours,
             day.others,
           ])
@@ -224,9 +224,12 @@ class UserController {
         sheet.mergeCells('B'+init+':B'+end)
 
         sheet.mergeCells('G'+init+':G'+(init+1))
+        sheet.getCell('G'+init).alignment = { vertical: 'top' }
         sheet.mergeCells('H'+init+':H'+(init+1))
+        sheet.getCell('H'+init).alignment = { vertical: 'top' }
 
         sheet.mergeCells('J'+init+':J'+end)
+        sheet.getCell('J'+init).alignment = { vertical: 'top' }
         sheet.mergeCells('K'+init+':K'+end)
       }
 
