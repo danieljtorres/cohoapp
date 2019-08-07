@@ -78,6 +78,8 @@
 import { constants } from 'crypto';
 export default {
   created() {
+    const wd = this.$store.$sv.authService.getWork()
+    store.commit('auth/SET_WORK', wd)
     this.$store.dispatch('activities/getAll')
     this.$store.dispatch('activities/getActive')
   },
@@ -89,7 +91,7 @@ export default {
   computed: {
     activities() {
       let acts = this.$store.state.activities.list
-      console.log(this.wd)
+      
       if(this.wd.category_id == 8 || this.wd.category_id == 9) {
         return acts.filter((v) => {
           return v.id == 2
