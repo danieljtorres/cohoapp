@@ -77,9 +77,11 @@
 <script>
 import { constants } from 'crypto';
 export default {
-  created() {
+  beforeCreate() {
     const wd = this.$store.$sv.authService.getWork()
     this.$store.commit('auth/SET_WORK', wd)
+  },
+  created() {
     this.$store.dispatch('activities/getAll')
     this.$store.dispatch('activities/getActive')
   },
