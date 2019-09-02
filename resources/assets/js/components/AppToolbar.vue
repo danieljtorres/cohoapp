@@ -19,8 +19,11 @@
         </v-list-tile>
       </v-list>
     </v-menu>
-    <img v-if="!authUser.role" src="/images/icons/end.png" alt="" width="30" @click.stop="isLogout = true">
-    <span>Finalizar</span>
+    <div v-if="!authUser.role" style="    text-align: center;display: flex;flex-flow: column;align-items: center;height: 50px;
+">
+      <img src="/images/icons/end.png" alt="" width="30" @click.stop="isLogout = true">
+      <span>FINALIZAR</span>
+    </div>
     <v-dialog v-model="isLogout" max-width="290">
       <v-card>
         <v-card-title class="headline" v-if="authUser.role">Salir</v-card-title>
