@@ -15,7 +15,7 @@
         </v-layout>
       </v-container>
 
-      <v-dialog v-model="isStartActivity" max-width="290" persistent>
+      <!--<v-dialog v-model="isStartActivity" max-width="290" persistent>
         <v-card v-if="activityForStart">
 
           <v-card-text>
@@ -34,7 +34,7 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog>-->
 
       <v-dialog v-model="isEndActivity" max-width="290">
         <v-card v-if="activeActivity">
@@ -110,6 +110,7 @@ export default {
       if (!this.activeActivity) {
         this.isStartActivity = true;
         this.activityForStart = data
+        this.startActivity()
       } else {
         if (this.activeActivity.id != data.id) {
           this.isEndActivity = true
@@ -127,12 +128,13 @@ export default {
       const valid = await this.$validator.validateAll()
       if (valid) {
         this.$store.dispatch('activities/end', { 
-          answer: this.$refs.answerForEndActivity ?this.$refs.answerForEndActivity.value : null 
+          answer: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null 
         })
           .then(res => {
           this.isEndActivity = false
           if (this.activityForStart != null) {
-            this.isStartActivity = true
+            //this.isStartActivity = true
+            this.startActivity()
           }
         })
       }

@@ -20,6 +20,7 @@
       </v-list>
     </v-menu>
     <img v-if="!authUser.role" src="/images/icons/end.png" alt="" width="30" @click.stop="isLogout = true">
+    <span>Finalizar</span>
     <v-dialog v-model="isLogout" max-width="290">
       <v-card>
         <v-card-title class="headline" v-if="authUser.role">Salir</v-card-title>
