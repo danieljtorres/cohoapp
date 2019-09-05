@@ -4543,6 +4543,26 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4613,23 +4633,100 @@ __webpack_require__.r(__webpack_exports__);
     toggleDrawer: function toggleDrawer() {
       this.$store.commit('TOGGLE_DRAWER');
     },
-    logout: function logout() {
-      var _this = this;
+    logout: function () {
+      var _logout = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var _this = this;
 
-      if (this.authUser.role) {
-        this.$store.dispatch('auth/logoutAdmin').then(function () {
-          _this.$router.push('/admin/login');
-        });
-      } else {
-        this.$store.dispatch('auth/logoutEmployee').then(function (result) {
-          if (result) {
-            _this.$router.push('/');
+        var valid;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                if (!this.authUser.role) {
+                  _context.next = 4;
+                  break;
+                }
 
-            _this.$store.commit('activities/SET_ACTIVE', null);
+                this.$store.dispatch('auth/logoutAdmin').then(function () {
+                  _this.$router.push('/admin/login');
+                });
+                _context.next = 8;
+                break;
+
+              case 4:
+                _context.next = 6;
+                return this.$validator.validateAll();
+
+              case 6:
+                valid = _context.sent;
+
+                if (valid) {
+                  this.$store.dispatch('activities/end').then(function (res) {
+                    _this.$store.dispatch('auth/logoutEmployee', {
+                      comments: _this.$refs.answerForEndActivity ? _this.$refs.answerForEndActivity.value : null
+                    }).then(function (result) {
+                      if (result) {
+                        _this.$router.push('/');
+
+                        _this.$store.commit('activities/SET_ACTIVE', null);
+                      }
+                    });
+                  });
+                }
+
+              case 8:
+              case "end":
+                return _context.stop();
+            }
           }
-        });
+        }, _callee, this);
+      }));
+
+      function logout() {
+        return _logout.apply(this, arguments);
       }
-    }
+
+      return logout;
+    }(),
+    endActivity: function () {
+      var _endActivity = _asyncToGenerator(
+      /*#__PURE__*/
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var valid;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return this.$validator.validateAll();
+
+              case 2:
+                valid = _context2.sent;
+
+                if (valid) {
+                  this.$store.dispatch('activities/end', {
+                    answer: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null
+                  }).then(function (res) {
+                    console.log('AAAAAA');
+                  });
+                }
+
+              case 4:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+
+      function endActivity() {
+        return _endActivity.apply(this, arguments);
+      }
+
+      return endActivity;
+    }()
   }
 });
 
@@ -5965,6 +6062,7 @@ var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
   data: function data() {
     return {
       isAction: false,
+      isSaving: false,
       user: {
         user_id: null,
         username: '',
@@ -6020,10 +6118,13 @@ var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
       this.userForDel = item.id;
     },
     doAction: function doAction() {
+      var _this = this;
+
       var vue = this;
       var userData, promise;
 
       if (this.isAction == 'save') {
+        this.isSaving = true;
         userData = Object.assign({}, this.user);
         delete userData.user_id;
         promise = this.$store.dispatch('users/saveEmployee', userData);
@@ -6034,17 +6135,18 @@ var axios = _plugins_axios_plugin__WEBPACK_IMPORTED_MODULE_1__["axiosInstance"];
       promise.then(function (result) {
         console.log(result);
         vue.isAction = false;
+        _this.isSaving = false;
       })["catch"](function (err) {
         console.log(err);
       });
     },
     doDelete: function doDelete() {
-      var _this = this;
+      var _this2 = this;
 
       axios["delete"]('users/' + this.userForDel).then(function () {
-        _this.userForDel = null;
+        _this2.userForDel = null;
 
-        _this.$store.dispatch('users/getEmployees');
+        _this2.$store.dispatch('users/getEmployees');
       });
     }
   }
@@ -6514,6 +6616,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         if (this.activeActivity.id != data.id) {
           this.isEndActivity = true;
           this.activityForStart = data;
+          this.endActivity();
         }
       }
     },
@@ -6544,9 +6647,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 valid = _context.sent;
 
                 if (valid) {
-                  this.$store.dispatch('activities/end', {
-                    answer: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null
-                  }).then(function (res) {
+                  this.$store.dispatch('activities/end').then(function (res) {
                     _this2.isEndActivity = false;
 
                     if (_this2.activityForStart != null) {
@@ -13126,7 +13227,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.avatar-toggle {\n  cursor: pointer;\n}\n.header-app {\n  background-color: #04091e !important;\n}\n", ""]);
+exports.push([module.i, "\n.avatar-toggle {\n  cursor: pointer;\n}\n.header-app {\n  background-color: #04091e !important;\n}\ntextarea {\n  width: 100%;\n  border: 2px solid #989898;\n  border-radius: 3px;\n  padding: 3px 5px;\n}\n", ""]);
 
 // exports
 
@@ -18358,7 +18459,7 @@ utils.intFromLE = intFromLE;
 /*! exports provided: _args, _from, _id, _inBundle, _integrity, _location, _phantomChildren, _requested, _requiredBy, _resolved, _spec, _where, author, bugs, dependencies, description, devDependencies, files, homepage, keywords, license, main, name, repository, scripts, version, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"C:\\\\Users\\\\User\\\\Documents\\\\Desarrollo\\\\cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"C:\\\\Users\\\\User\\\\Documents\\\\Desarrollo\\\\cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
+module.exports = JSON.parse("{\"_args\":[[\"elliptic@6.5.0\",\"C:\\\\Desarrollo\\\\cohoapp\"]],\"_from\":\"elliptic@6.5.0\",\"_id\":\"elliptic@6.5.0\",\"_inBundle\":false,\"_integrity\":\"sha512-eFOJTMyCYb7xtE/caJ6JJu+bhi67WCYNbkGSknu20pmM8Ke/bqOfdnZWxyoGN26JgfxTbXrsCkEw4KheCT/KGg==\",\"_location\":\"/elliptic\",\"_phantomChildren\":{},\"_requested\":{\"type\":\"version\",\"registry\":true,\"raw\":\"elliptic@6.5.0\",\"name\":\"elliptic\",\"escapedName\":\"elliptic\",\"rawSpec\":\"6.5.0\",\"saveSpec\":null,\"fetchSpec\":\"6.5.0\"},\"_requiredBy\":[\"/browserify-sign\",\"/create-ecdh\"],\"_resolved\":\"https://registry.npmjs.org/elliptic/-/elliptic-6.5.0.tgz\",\"_spec\":\"6.5.0\",\"_where\":\"C:\\\\Desarrollo\\\\cohoapp\",\"author\":{\"name\":\"Fedor Indutny\",\"email\":\"fedor@indutny.com\"},\"bugs\":{\"url\":\"https://github.com/indutny/elliptic/issues\"},\"dependencies\":{\"bn.js\":\"^4.4.0\",\"brorand\":\"^1.0.1\",\"hash.js\":\"^1.0.0\",\"hmac-drbg\":\"^1.0.0\",\"inherits\":\"^2.0.1\",\"minimalistic-assert\":\"^1.0.0\",\"minimalistic-crypto-utils\":\"^1.0.0\"},\"description\":\"EC cryptography\",\"devDependencies\":{\"brfs\":\"^1.4.3\",\"coveralls\":\"^2.11.3\",\"grunt\":\"^0.4.5\",\"grunt-browserify\":\"^5.0.0\",\"grunt-cli\":\"^1.2.0\",\"grunt-contrib-connect\":\"^1.0.0\",\"grunt-contrib-copy\":\"^1.0.0\",\"grunt-contrib-uglify\":\"^1.0.1\",\"grunt-mocha-istanbul\":\"^3.0.1\",\"grunt-saucelabs\":\"^8.6.2\",\"istanbul\":\"^0.4.2\",\"jscs\":\"^2.9.0\",\"jshint\":\"^2.6.0\",\"mocha\":\"^2.1.0\"},\"files\":[\"lib\"],\"homepage\":\"https://github.com/indutny/elliptic\",\"keywords\":[\"EC\",\"Elliptic\",\"curve\",\"Cryptography\"],\"license\":\"MIT\",\"main\":\"lib/elliptic.js\",\"name\":\"elliptic\",\"repository\":{\"type\":\"git\",\"url\":\"git+ssh://git@github.com/indutny/elliptic.git\"},\"scripts\":{\"jscs\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"jshint\":\"jscs benchmarks/*.js lib/*.js lib/**/*.js lib/**/**/*.js test/index.js\",\"lint\":\"npm run jscs && npm run jshint\",\"test\":\"npm run lint && npm run unit\",\"unit\":\"istanbul test _mocha --reporter=spec test/index.js\",\"version\":\"grunt dist && git add dist/\"},\"version\":\"6.5.0\"}");
 
 /***/ }),
 
@@ -61529,6 +61630,41 @@ var render = function() {
               _vm._v(" "),
               !_vm.authUser.role
                 ? _c("v-card-text", [
+                    _c("form", [
+                      _c("textarea", {
+                        directives: [
+                          {
+                            name: "validate",
+                            rawName: "v-validate",
+                            value: "required",
+                            expression: "'required'"
+                          }
+                        ],
+                        ref: "answerForEndActivity",
+                        staticClass: "outline",
+                        attrs: {
+                          placeholder: "Describe las tareas realizadas",
+                          "data-vv-name": "quest"
+                        }
+                      }),
+                      _vm._v(" "),
+                      _vm.errors.has("quest")
+                        ? _c("span", [
+                            _c("small", [
+                              _vm._v(_vm._s(_vm.errors.collect("quest")[0]))
+                            ])
+                          ])
+                        : _vm._e()
+                    ]),
+                    _vm._v(" "),
+                    _c("small", [
+                      _vm._v(
+                        "* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo"
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("br"),
+                    _c("br"),
                     _vm._v(
                       "\n          ¿Estás seguro que deseas finalizar tu jornada laboral del dia de hoy?\n        "
                     )
@@ -63664,7 +63800,11 @@ var render = function() {
                       _c(
                         "v-btn",
                         {
-                          attrs: { color: "blue darken-1", flat: "" },
+                          attrs: {
+                            loading: _vm.isSaving,
+                            color: "blue darken-1",
+                            flat: ""
+                          },
                           on: { click: _vm.doAction }
                         },
                         [_vm._v("Guardar")]
@@ -109297,38 +109437,39 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     end: function () {
       var _end = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(_ref4, data) {
-        var commit, tokenData, record;
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(_ref4) {
+        var commit, data, tokenData, record;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 commit = _ref4.commit;
                 _context4.prev = 1;
+                data = {};
                 tokenData = this.$sv.authService.getWork();
                 data.working_day_id = tokenData.id;
-                _context4.next = 6;
+                _context4.next = 7;
                 return this.$sv.activityService.end(data);
 
-              case 6:
+              case 7:
                 record = _context4.sent;
                 commit('SET_ACTIVE', null);
                 return _context4.abrupt("return", true);
 
-              case 11:
-                _context4.prev = 11;
+              case 12:
+                _context4.prev = 12;
                 _context4.t0 = _context4["catch"](1);
                 return _context4.abrupt("return", Promise.reject(_context4.t0));
 
-              case 14:
+              case 15:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[1, 11]]);
+        }, _callee4, this, [[1, 12]]);
       }));
 
-      function end(_x5, _x6) {
+      function end(_x5) {
         return _end.apply(this, arguments);
       }
 
@@ -109369,7 +109510,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee5, this, [[1, 10]]);
       }));
 
-      function save(_x7, _x8) {
+      function save(_x6, _x7) {
         return _save.apply(this, arguments);
       }
 
@@ -109409,7 +109550,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee6, this, [[1, 9]]);
       }));
 
-      function edit(_x9, _x10) {
+      function edit(_x8, _x9) {
         return _edit.apply(this, arguments);
       }
 
@@ -109432,6 +109573,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
 
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -109591,37 +109740,39 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     logoutEmployee: function () {
       var _logoutEmployee = _asyncToGenerator(
       /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5() {
+      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(_ref5, data) {
         var w;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _context5.prev = 0;
-                w = this.$sv.authService.getWork();
-                _context5.next = 4;
-                return this.$sv.authService.logoutEmployee({
-                  working_day_id: w.id
-                });
+                _objectDestructuringEmpty(_ref5);
 
-              case 4:
+                _context5.prev = 1;
+                w = this.$sv.authService.getWork();
+                _context5.next = 5;
+                return this.$sv.authService.logoutEmployee(_objectSpread({
+                  working_day_id: w.id
+                }, data));
+
+              case 5:
                 this.$sv.authService.stopWork();
                 return _context5.abrupt("return", true);
 
-              case 8:
-                _context5.prev = 8;
-                _context5.t0 = _context5["catch"](0);
+              case 9:
+                _context5.prev = 9;
+                _context5.t0 = _context5["catch"](1);
                 return _context5.abrupt("return", Promise.reject(_context5.t0));
 
-              case 11:
+              case 12:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[0, 8]]);
+        }, _callee5, this, [[1, 9]]);
       }));
 
-      function logoutEmployee() {
+      function logoutEmployee(_x5, _x6) {
         return _logoutEmployee.apply(this, arguments);
       }
 
@@ -110176,7 +110327,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\User\Documents\Desarrollo\cohoapp\resources\assets\js\index.js */"./resources/assets/js/index.js");
+module.exports = __webpack_require__(/*! C:\Desarrollo\cohoapp\resources\assets\js\index.js */"./resources/assets/js/index.js");
 
 
 /***/ }),

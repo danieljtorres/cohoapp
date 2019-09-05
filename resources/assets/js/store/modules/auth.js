@@ -43,10 +43,10 @@ export default {
     async logout() {
       return this.$sv.authService.logout()
     },
-    async logoutEmployee() {
+    async logoutEmployee({}, data) {
       try {
         const w = this.$sv.authService.getWork()
-        await this.$sv.authService.logoutEmployee({ working_day_id: w.id })
+        await this.$sv.authService.logoutEmployee({ working_day_id: w.id, ...data })
         this.$sv.authService.stopWork()
         return true
       } catch (error) {

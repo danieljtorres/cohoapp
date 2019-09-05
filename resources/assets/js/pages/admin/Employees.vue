@@ -32,7 +32,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="isAction = false">Cancelar</v-btn>
-            <v-btn color="blue darken-1" flat @click="doAction">Guardar</v-btn>
+            <v-btn :loading="isSaving" color="blue darken-1" flat @click="doAction">Guardar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -122,6 +122,7 @@ export default {
   },
   data: () => ({
     isAction: false,
+    isSaving: false,
     user: {
       user_id: null,
       username: '',
@@ -160,6 +161,7 @@ export default {
       const vue = this
       let userData, promise
       if (this.isAction == 'save') {
+        this.isSaving = true
         userData = Object.assign({}, this.user)
         delete userData.user_id
         promise = this.$store.dispatch('users/saveEmployee', userData)
@@ -170,6 +172,7 @@ export default {
       promise.then((result) => {
         console.log(result)
         vue.isAction = false
+        this.isSaving = false
       }).catch((err) => {
         console.log(err)
       });

@@ -43,8 +43,9 @@ export default {
         return Promise.reject(error)
       }
     },
-    async end({ commit }, data) {
+    async end({ commit }) {
       try {
+        const data = {}
         const tokenData = this.$sv.authService.getWork()
         data.working_day_id = tokenData.id
         const record = await this.$sv.activityService.end(data)

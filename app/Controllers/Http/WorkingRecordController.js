@@ -62,12 +62,11 @@ class WorkingRecordController {
   }
 
   async end({ request, response }) {
-    const { answer, working_day_id } = request.all()
+    const { working_day_id } = request.all()
 
     try {
       const record = await WorkingRecord.query().where({ end: null, working_day_id: working_day_id }).firstOrFail()
       record.end = moment().unix()
-      record.answer = answer
       record.save()
 
       const activity = await WorkingActivity.findOrFail(record.activity_id)
@@ -76,6 +75,7 @@ class WorkingRecordController {
         data: activity
       })
     } catch (error) {
+      console.log(error)
       response.status(error.status).json({
         error: error.message
       })

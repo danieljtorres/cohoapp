@@ -115,6 +115,7 @@ export default {
         if (this.activeActivity.id != data.id) {
           this.isEndActivity = true
           this.activityForStart = data
+          this.endActivity()
         }
       }
     },
@@ -127,9 +128,7 @@ export default {
     async endActivity() {
       const valid = await this.$validator.validateAll()
       if (valid) {
-        this.$store.dispatch('activities/end', { 
-          answer: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null 
-        })
+        this.$store.dispatch('activities/end')
           .then(res => {
           this.isEndActivity = false
           if (this.activityForStart != null) {

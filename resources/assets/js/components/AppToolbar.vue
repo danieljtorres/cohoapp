@@ -33,6 +33,18 @@
           ¿Estás seguro que salir?
         </v-card-text>
         <v-card-text v-if="!authUser.role">
+          <form>
+            <textarea
+              class="outline"
+              placeholder="Describe las tareas realizadas"
+              ref="answerForEndActivity"
+              v-validate="'required'"
+              data-vv-name="quest"
+            ></textarea>
+            <span v-if="errors.has('quest')"><small>{{ errors.collect('quest')[0] }}</small></span>
+          </form>
+          <small>* Es necesario rellenar antes de finalizar tu jornada o cambiar el tipo de trabajo</small>
+          <br><br>
           ¿Estás seguro que deseas finalizar tu jornada laboral del dia de hoy?
         </v-card-text>
 
@@ -65,17 +77,37 @@ export default {
     toggleDrawer() {
       this.$store.commit('TOGGLE_DRAWER')
     },
-    logout() {
+    async logout() {
       if (this.authUser.role) {
         this.$store.dispatch('auth/logoutAdmin').then(() => {
           this.$router.push('/admin/login')
         })
       } else {
-        this.$store.dispatch('auth/logoutEmployee').then((result) => {
-          if (result) {
-            this.$router.push('/')
-            this.$store.commit('activities/SET_ACTIVE', null)
-          }
+        const valid = await this.$validator.validateAll()
+        if (valid) {
+          this.$store.dispatch('activities/end')
+          .then(res => {
+            this.$store.dispatch('auth/logoutEmployee', { 
+              comments: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null 
+            })
+            .then((result) => {
+              if (result) {
+                this.$router.push('/')
+                this.$store.commit('activities/SET_ACTIVE', null)
+              }
+            })
+          })
+        }
+      }
+    },
+    async endActivity() {
+      const valid = await this.$validator.validateAll()
+      if (valid) {
+        this.$store.dispatch('activities/end', { 
+          answer: this.$refs.answerForEndActivity ? this.$refs.answerForEndActivity.value : null 
+        })
+        .then(res => {
+          console.log('AAAAAA')
         })
       }
     }
@@ -89,5 +121,12 @@ export default {
   } 
   .header-app {
     background-color: #04091e !important;
+  }
+
+  textarea {
+    width: 100%;
+    border: 2px solid #989898;
+    border-radius: 3px;
+    padding: 3px 5px;
   }
 </style>
