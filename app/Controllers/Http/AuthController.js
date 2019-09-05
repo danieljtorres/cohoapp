@@ -75,20 +75,20 @@ class AuthController {
   }  
 
   async stopWork({ request, response }) {
-    const { working_day_id } = request.all()
+    const { working_day_id, comments } = request.all()
     try {
 
       const mNow = moment().unix()
 
       const workDay = await WorkingDay.findOrFail(working_day_id)
       workDay.end = mNow
+      if (comments) workDay.comments = comments
       await workDay.save()
 
       const workRecord = await WorkingRecord.query().where({ working_day_id: working_day_id, end: null }).first()
       if (workRecord) {
         workRecord.end = mNow
         await workRecord.save()
-        console.log(workRecord)
       }
 
       response.json(true)

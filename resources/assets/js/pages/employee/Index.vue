@@ -36,7 +36,7 @@
         </v-card>
       </v-dialog>-->
 
-      <v-dialog v-model="isEndActivity" max-width="290">
+      <!--<v-dialog v-model="isEndActivity" max-width="290">
         <v-card v-if="activeActivity">
           <v-card-title class="headline">
             <img :src="`/images/icons/${activeActivity.icon}.png`" alt="" width="30" class="mr-3"> {{ activeActivity.name }}
@@ -69,7 +69,7 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-      </v-dialog>
+      </v-dialog>-->
     </v-flex>
   </v-layout>
 </template>

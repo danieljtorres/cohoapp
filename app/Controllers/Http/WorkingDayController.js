@@ -8,13 +8,9 @@ class WorkingDayController {
   async save({ request, response }) {
     let day = request.all()
 
-    console.log(day)
-
     try {
       day.start = moment(day.start).unix()
       day.end = moment(day.end).unix()
-
-      console.log(day)
 
       day = await WorkingDay.create(day)
 
@@ -22,7 +18,6 @@ class WorkingDayController {
         data: day
       })
     } catch(error) {
-      console.log(error)
       response.status(error.status).json({
         error: error.message
       })

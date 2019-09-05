@@ -67,8 +67,8 @@ class UserController {
         data: user
       })
     } catch (error) {
-      console.log(error)
-      response.status(error.status).json({
+      console.log(error.message)
+      response.status(error.status|| 500).json({
         error: error.message
       })
     }
