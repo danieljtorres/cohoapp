@@ -1,6 +1,7 @@
 'use strict'
 
 const WorkingRecord = use('App/Models/WorkingRecord')
+const WorkingDay = use('App/Models/WorkingDay')
 const WorkingActivity = use('App/Models/WorkingActivity')
 const moment = require('moment')
 
@@ -65,18 +66,39 @@ class WorkingRecordController {
     const { working_day_id } = request.all()
 
     try {
+      const mNow = moment()
+
       const record = await WorkingRecord.query().where({ end: null, working_day_id: working_day_id }).firstOrFail()
-      record.end = moment().unix()
+      const workDay = await WorkingDay.find(record.working_day_id)
+
+      const end = mNow.unix()
+
+      let nextWorkDay = null
+
+      if (moment.unix(record.start).date() < mNow.date()) {
+        end = moment.unix(record.start).endOf('day').unix()
+
+        nextWorkDay = await WorkingDay.create({ user_id: workDay.user_id, category_id: workDay.category_id, start: mNow.startOf('day').unix() })
+        nextWorkDay.end = mNow.unix()
+        nextWorkDay.save()
+
+        const nextRecord = await WorkingRecord.create({ activity_id: record.activity_id, working_day_id: nextWorkDay.id, start: mNow.startOf('day').unix() })
+        nextRecord.end = mNow.unix()
+        nextRecord.save()
+      }
+      
+      record.end = end
       record.save()
 
       const activity = await WorkingActivity.findOrFail(record.activity_id)
 
       response.json({
-        data: activity
+        data: activity,
+        nextWorkDay: nextWorkDay
       })
     } catch (error) {
       console.log(error)
-      response.status(error.status).json({
+      response.status(error.status || 500).json({
         error: error.message
       })
     }

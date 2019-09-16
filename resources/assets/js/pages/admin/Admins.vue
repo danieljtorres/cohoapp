@@ -157,6 +157,14 @@ export default {
 
       promise.then((result) => {
         console.log(result)
+        this.user = {
+          user_id: null,
+          username: '',
+          email: '',
+          firstname: '',
+          lastname: '',
+          password: ''
+        }
         vue.isAction = false
       }).catch((err) => {
         console.log(err)

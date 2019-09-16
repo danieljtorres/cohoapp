@@ -49,7 +49,7 @@ class AuthController {
         error: 'Datos incorrectos'
       })
     } catch (error) {
-      response.status(error.status).json({
+      response.status(error.status || 500).json({
         error: error.message
       })
     }
@@ -78,16 +78,35 @@ class AuthController {
     const { working_day_id, comments } = request.all()
     try {
 
-      const mNow = moment().unix()
+      const mNow = moment()
 
       const workDay = await WorkingDay.findOrFail(working_day_id)
-      workDay.end = mNow
+      const workRecord = await WorkingRecord.query().where({ working_day_id: working_day_id, end: null }).first()
+      
+      const workDayEnd = mNow.unix()
+      const workRecordEnd = mNow.unix()
+
+      if (moment.unix(workDay.start).date() < mNow.date()) {
+        workDayEnd = moment.unix(workDay.start).endOf('day').unix()
+        workRecordEnd = moment.unix(workDay.start).endOf('day').unix()
+
+        if (workRecord) {
+          const nextWorkDay = await WorkingDay.create({ user_id: workDay.user_id, category_id: workDay.category_id, start: mNow.startOf('day').unix() })
+          nextWorkDay.end = mNow.unix()
+          nextWorkDay.save()
+
+          const nextWorkRecord = await WorkingRecord.create({ activity_id: workRecord.activity_id, working_day_id: nextWorkDay.id, start: mNow.startOf('day').unix() })
+          nextWorkRecord.end = mNow.unix()
+          nextWorkRecord.save()
+        }
+      }
+
+      workDay.end = workDayEnd
       if (comments) workDay.comments = comments
       await workDay.save()
 
-      const workRecord = await WorkingRecord.query().where({ working_day_id: working_day_id, end: null }).first()
       if (workRecord) {
-        workRecord.end = mNow
+        workRecord.end = workRecordEnd
         await workRecord.save()
       }
 

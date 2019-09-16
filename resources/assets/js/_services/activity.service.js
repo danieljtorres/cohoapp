@@ -30,7 +30,7 @@ export default {
   end(data) {
     return http.post('working-record/end', data)
       .then(response => {
-        if (response.data) return response.data.data
+        if (response.data) return response.data
       }, error => {
         return Promise.reject(error);
       })

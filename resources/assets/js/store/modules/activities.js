@@ -48,7 +48,10 @@ export default {
         const data = {}
         const tokenData = this.$sv.authService.getWork()
         data.working_day_id = tokenData.id
-        const record = await this.$sv.activityService.end(data)
+        const res = await this.$sv.activityService.end(data)
+        if (res.nextWorkDay) {
+          localStorage.setItem('coho_work', JSON.stringify(data.nextWorkDay))
+        }
         commit('SET_ACTIVE', null)
         return true
       } catch (error) {

@@ -86,7 +86,6 @@ export default {
         const loginData = { category_id: this.category_id }
         axios.post('start-work', loginData)
           .then(res => {
-            res.data.data
             localStorage.setItem('coho_work', JSON.stringify(res.data.data))
             this.$router.push('/work')
           }, error => {

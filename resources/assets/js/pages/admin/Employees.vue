@@ -169,13 +169,22 @@ export default {
         promise = this.$store.dispatch('users/edit', this.user)
       }
 
-      promise.then((result) => {
-        console.log(result)
-        vue.isAction = false
-        this.isSaving = false
-      }).catch((err) => {
-        console.log(err)
-      });
+      promise
+        .then((result) => {
+          this.user = {
+            user_id: null,
+            username: '',
+            email: '',
+            firstname: '',
+            lastname: '',
+            password: ''
+          }
+          vue.isAction = false
+          this.isSaving = false
+        })
+        .catch((err) => {
+          console.log(err)
+        });
     },
     doDelete() {
       axios.delete('users/'+this.userForDel).then(() => {
