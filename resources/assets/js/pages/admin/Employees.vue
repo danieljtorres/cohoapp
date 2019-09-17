@@ -183,7 +183,11 @@ export default {
           this.isSaving = false
         })
         .catch((err) => {
-          console.log(err)
+          alert("Revise las siguientes condiciones:\n"+
+                "· El correo no debe estar registrado anteriormente\n"+
+                "· El usuario no debe estar registrado anteriormente\n"+
+                "· La contraseña es obligatoria")
+          this.isSaving = false
         });
     },
     doDelete() {

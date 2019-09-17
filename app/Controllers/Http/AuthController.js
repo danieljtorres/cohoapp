@@ -83,8 +83,8 @@ class AuthController {
       const workDay = await WorkingDay.findOrFail(working_day_id)
       const workRecord = await WorkingRecord.query().where({ working_day_id: working_day_id, end: null }).first()
       
-      const workDayEnd = mNow.unix()
-      const workRecordEnd = mNow.unix()
+      let workDayEnd = mNow.unix()
+      let workRecordEnd = mNow.unix()
 
       if (moment.unix(workDay.start).date() < mNow.date()) {
         workDayEnd = moment.unix(workDay.start).endOf('day').unix()

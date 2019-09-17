@@ -71,7 +71,7 @@ class WorkingRecordController {
       const record = await WorkingRecord.query().where({ end: null, working_day_id: working_day_id }).firstOrFail()
       const workDay = await WorkingDay.find(record.working_day_id)
 
-      const end = mNow.unix()
+      let end = mNow.unix()
 
       let nextWorkDay = null
 
