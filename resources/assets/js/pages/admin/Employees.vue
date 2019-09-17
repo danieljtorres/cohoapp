@@ -1,7 +1,7 @@
 <template>
   <v-content>
     <v-container fluid>
-      <v-dialog :value="isAction" max-width="500px">
+      <v-dialog :value="isAction" persistent max-width="500px">
         <v-card>
           <v-card-title>
             <span class="headline">{{ isAction == 'edit' ? 'Editar' : 'Nuevo' }} empleado</span>
